@@ -9,7 +9,7 @@ const Signup = () => {
     const [email, setEmail] = useState("");
 
     const PostData = () => {
-        fetch('http://localhost:5000/Signup', {
+        fetch('/Signup', {
             method: "post", // Ensure the method is POST
             headers: {
                 "Content-Type": "application/json"

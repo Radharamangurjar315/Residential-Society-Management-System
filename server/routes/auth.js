@@ -7,14 +7,14 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../keys');
 const requiredLogin = require('../middlewares/requiredLogin');
 
-router.get('/protected', requiredLogin, (req, res) => {
+router.get('/protected', requiredLogin, (req, res,next) => {
     res.send("Hello Duniya");
 });
 
 router.post('/signup', (req, res) => {
     console.log(req.body);
-    const { name, email, password } = req.body;
-    if (!email || !password || !name) {
+    const { name, email, password, role} = req.body;
+    if (!email || !password || !name || !role) {
         return res.status(422).json({ error: "Please add all the fields" });
     }
     User.findOne({ email : email })
@@ -27,7 +27,8 @@ router.post('/signup', (req, res) => {
             const user = new User({
                 email,
                 password: hashedpassword,
-                name
+                name,
+                role
             });
             user.save()
                 .then(user => {
@@ -46,7 +47,7 @@ router.post('/signup', (req, res) => {
 });
 router.post('/signin',(req,res)=>{
     const {email,password} = req.body
-    if(!email || !password){
+    if(!email || !password || !role){
     return res.status(422).json({error:"Please enter the email or password"})
   }
   User.findOne({email:email})
@@ -59,8 +60,8 @@ router.post('/signin',(req,res)=>{
   if(doMatch){
 //    res.json({message:"Successfully Signed in"})
     const token = jwt.sign({_id:savedUser._id},JWT_SECRET)
-    const {_id,name,email}=savedUser
-    res.json({token,user:{_id,name,email}})
+    const {_id,name,email,role}=savedUser
+    res.json({token,user:{_id,name,email,role}})
   }
   else{
     return res.status(422).json({error:"Inavalid email or password"})

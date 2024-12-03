@@ -9,7 +9,7 @@ const Signup = () => {
     const [email, setEmail] = useState("");
 
     const PostData = () => {
-        fetch('/Signup', {
+        fetch('/signup', {
             method: "post", // Ensure the method is POST
             headers: {
                 "Content-Type": "application/json"
@@ -17,7 +17,7 @@ const Signup = () => {
             body: JSON.stringify({
                 name: name,
                 password: password,
-                email: email
+                email: email,
             })
         })
         .then(res => res.json())
@@ -26,7 +26,7 @@ const Signup = () => {
                 M.toast({ html: data.error });
             } else {
                 M.toast({ html: data.message });
-                navigate('/signin');
+                navigate('/Signin');
             }
         })
         .catch(error => {

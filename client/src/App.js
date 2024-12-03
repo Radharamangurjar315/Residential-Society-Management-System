@@ -6,6 +6,8 @@ import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
+
+
 // import CreatePost from "./components/CreatePost";
 import "./App.css"; 
 // import { reducer, initialState } from "./reducer/userReducer";
@@ -35,6 +37,12 @@ import "./App.css";
 //     </Routes>
 // )
 // };
+const originalWarn = console.warn;
+console.warn = (message, ...args) => {
+  if (message.includes('React Router Future Flag Warning')) return;
+  originalWarn(message, ...args);
+};
+
 
 function App() {
   // const [state, dispatch] = useReducer(reducer, initialState);
@@ -49,7 +57,6 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/profile" element={ <Profile />} />
     </Routes>
-
       </BrowserRouter>
     // </UserContext.Provider>
   );

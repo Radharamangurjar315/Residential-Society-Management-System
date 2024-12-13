@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import M from 'materialize-css';
-
+import './Auth.css';
 const Signin = () => {
     const navigate = useNavigate();
     const [password, setPassword] = useState("");

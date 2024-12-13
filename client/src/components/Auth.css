@@ -1,0 +1,92 @@
+/* General Styles for Auth Card */
+.auth-card {
+  background: linear-gradient(135deg, #ffffff, #f0f0f0);
+  padding: 2rem 3rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  color: #333;
+  z-index: 20;
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.3s ease-in-out;
+}
+
+.auth-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Header (Title) */
+.auth-card h2 {
+  font-size: 2.4rem;
+  margin-bottom: 2rem;
+  color: #2c5364;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Input Fields */
+.auth-card input {
+  width: 100%;
+  padding: 1.1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+  font-size: 1rem;
+  color: #333;
+  transition: 0.3s ease-in-out;
+  outline: none;
+}
+
+.auth-card input:focus {
+  background: #e0f7fa;
+  border-color: #1e3c72;
+  box-shadow: 0 0 8px rgba(30, 60, 114, 0.6);
+}
+
+/* Button */
+.auth-card .btn {
+  display: inline-block;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  padding: 0.4rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s transform, 0.2s box-shadow;
+  margin-bottom: 1rem; /* Ensure space below the button */
+}
+
+.auth-card .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Links */
+.auth-card h6 {
+  margin-top: 1.2rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+.auth-card h6 a {
+  color: #2a5298;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s color ease;
+}
+
+.auth-card h6 a:hover {
+  color: #1e3c72;
+}

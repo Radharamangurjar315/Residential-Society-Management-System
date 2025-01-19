@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import M from 'materialize-css';
 import './Auth.css';
+
 const Signin = () => {
     const navigate = useNavigate();
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
 
     const PostData = () => {
-        fetch('/Signin', { 
+        fetch('/signin', { // Updated the endpoint to '/signin'
             method: "post",
             headers: {
                 "Content-Type": "application/json"
@@ -24,7 +25,15 @@ const Signin = () => {
                 M.toast({ html: data.error });
             } else {
                 M.toast({ html: "Signed in successfully" });
-                navigate('/');
+                
+                // Handle role-based redirection based on data.role
+                if (data.role === "admin") {
+                    navigate('/admin-dashboard'); // Redirect to admin dashboard
+                } else if (data.role === "resident") {
+                    navigate('/resident-dashboard'); // Redirect to resident dashboard
+                } else {
+                    navigate('/'); // Default redirection
+                }
             }
         })
         .catch(error => {

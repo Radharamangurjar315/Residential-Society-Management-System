@@ -1,5 +1,6 @@
 import React from 'react';
 import './Home.css';
+import EventCalendar from './EventCalendar';
 
 const HomePage = () => {
   return (
@@ -22,7 +23,14 @@ const HomePage = () => {
           <button className="home-button">View Apartments</button>
         </div>
       </main>
-
+<div>
+        <div className="home-info-card">
+          <h2 className="home-card-title">Manage Events</h2>
+          <p className="home-card-text">Create and manage events for your society.</p>
+          <button className="home-button">View Events</button>
+        </div>  
+        <EventCalendar/>
+</div>
       <footer className="home-footer">
         <p className="home-footer-text">© 2024 Society Management. All rights reserved.</p>
       </footer>

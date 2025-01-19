@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import M from 'materialize-css';
 import './Auth.css';
+
 const Signup = () => {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+    const [role, setRole] = useState("resident"); // Default to 'resident'
+    const [societyName, setSocietyName] = useState("");
 
     const PostData = () => {
         fetch('/signup', {
@@ -18,6 +21,8 @@ const Signup = () => {
                 name: name,
                 password: password,
                 email: email,
+                role: role,
+                societyName: societyName
             })
         })
         .then(res => res.json())
@@ -57,6 +62,20 @@ const Signup = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
+                <input
+                    type="text"
+                    placeholder="Society Name"
+                    value={societyName}
+                    onChange={(e) => setSocietyName(e.target.value)}
+                />
+                <select
+                    className="browser-default"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                >
+                    <option value="resident">Resident</option>
+                    <option value="admin">Admin</option>
+                </select>
                 <button
                     className="btn waves-effect waves-light #64b5f6 blue darken-1"
                     type="button"

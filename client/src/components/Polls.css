@@ -1,0 +1,121 @@
+/* Container Styling */
+.poll-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #ffffff, #f7f9fc);
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Title */
+  .poll-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Input */
+  .poll-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  
+  /* Voting Options */
+  .poll-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .poll-option {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .poll-option:hover {
+    background-color: #e0f7fa;
+    border-color: #4fc3f7;
+  }
+  
+  .poll-option.selected {
+    background-color: #4fc3f7;
+    color: white;
+    font-weight: bold;
+  }
+  
+  /* Progress Bar */
+  .poll-progress-bar {
+    height: 6px;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  
+  .poll-progress-bar-filled {
+    height: 6px;
+    background-color: #4fc3f7;
+    transition: width 0.3s ease;
+  }
+  
+  /* Vote Button */
+  .poll-vote-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #4caf50;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .poll-vote-btn:hover {
+    background-color: #43a047;
+  }
+  
+  .poll-vote-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  /* Vote History */
+  .poll-history {
+    margin-top: 30px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 20px;
+  }
+  
+  .poll-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  .poll-history-timestamp {
+    font-size: 12px;
+    color: #999999;
+  }
+  

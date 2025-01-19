@@ -10,6 +10,7 @@ import Signup from "./components/Signup";
 
 // import CreatePost from "./components/CreatePost";
 import "./App.css"; 
+import Polls from './components/Polls';
 // import { reducer, initialState } from "./reducer/userReducer";
 
 // export const UserContext = createContext();
@@ -56,6 +57,7 @@ function App() {
       <Route path="/signin" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/profile" element={ <Profile />} />
+      <Route path="/polls" element={ <Polls />} />
     </Routes>
       </BrowserRouter>
     // </UserContext.Provider>

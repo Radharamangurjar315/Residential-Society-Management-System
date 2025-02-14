@@ -30,7 +30,7 @@ const Signin = () => {
                 if (data.role === "admin") {
                     navigate('/admin-dashboard'); // Redirect to admin dashboard
                 } else if (data.role === "resident") {
-                    navigate('/resident-dashboard'); // Redirect to resident dashboard
+                    navigate('/signin'); // Redirect to resident dashboard
                 } else {
                     navigate('/'); // Default redirection
                 }

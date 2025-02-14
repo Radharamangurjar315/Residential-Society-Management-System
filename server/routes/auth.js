@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../keys');
 const requiredLogin = require('../middlewares/requiredLogin');
+const society = require('../models/society');
 
 router.get('/protected', requiredLogin, (req, res,next) => {
     res.send("Hello Duniya");
@@ -13,7 +14,7 @@ router.get('/protected', requiredLogin, (req, res,next) => {
 
 router.post('/signup', (req, res) => {
     console.log(req.body);
-    const { name, email, password} = req.body;
+    const { name, email, password, role, societyName} = req.body;
     if (!email || !password || !name) {
         return res.status(422).json({ error: "Please add all the fields" });
     }
@@ -28,6 +29,8 @@ router.post('/signup', (req, res) => {
                 email,
                 password: hashedpassword,
                 name,
+                societyName,
+                role
             });
             user.save()
                 .then(user => {

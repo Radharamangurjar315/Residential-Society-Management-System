@@ -11,6 +11,11 @@ import Signup from "./components/Signup";
 // import CreatePost from "./components/CreatePost";
 import "./App.css"; 
 import Polls from './components/Polls';
+import EventCalendar from './components/EventCalendar';
+import Explore from './components/Explore';
+import Notice from './components/Notice';
+
+
 // import { reducer, initialState } from "./reducer/userReducer";
 
 // export const UserContext = createContext();
@@ -38,11 +43,7 @@ import Polls from './components/Polls';
 //     </Routes>
 // )
 // };
-const originalWarn = console.warn;
-console.warn = (message, ...args) => {
-  if (message.includes('React Router Future Flag Warning')) return;
-  originalWarn(message, ...args);
-};
+
 
 
 function App() {
@@ -58,6 +59,9 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/profile" element={ <Profile />} />
       <Route path="/polls" element={ <Polls />} />
+      <Route path="/events" element={ <EventCalendar isAdmin={true} />} />
+      <Route path="/explore" element={ <Explore/>} />
+      <Route path="/notices" element={ <Notice/>} />
     </Routes>
       </BrowserRouter>
     // </UserContext.Provider>

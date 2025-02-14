@@ -20,8 +20,11 @@ import {
   Settings as SettingsIcon,
   DarkMode as DarkModeIcon,
   LightMode as LightModeIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  Event as EventIcon,
+  
 } from '@mui/icons-material';
+// import EventCalendar from './EventCalendar';
 
 function ElevationScroll(props) {
   const { children } = props;
@@ -35,7 +38,8 @@ function ElevationScroll(props) {
     sx: {
       transition: 'all 0.3s ease-in-out',
       backdropFilter: 'blur(8px)',
-      backgroundColor: trigger ? 'rgba(25, 118, 210, 0.95)' : 'rgba(25, 118, 210, 0.8)',
+      // backgroundColor: trigger ? 'rgba(25, 118, 210, 0.95)' : 'rgba(25, 118, 210, 0.8)',
+      backgroundColor: 'grey.500',
     }
   });
 }
@@ -87,6 +91,7 @@ const NavBar = () => {
           '& .MuiMenuItem-root': {
             py: 1,
             px: 2,
+            
           },
         },
       }}
@@ -160,10 +165,11 @@ const NavBar = () => {
 
   const navItems = [
     { text: 'Home', icon: <HomeIcon />, path: '/' },
-    { text: 'Explore', icon: <ExploreIcon />, path: '/explore' },
+    { text: 'Events', icon: <EventIcon />, path: '/events' },
     { text: 'Polls', icon: <PollIcon />, path: '/polls' },
     { text: 'Login', icon: <LoginIcon />, path: '/signin' },
     { text: 'Signup', icon: <SignupIcon />, path: '/signup' },
+    { text: 'Explore', icon: <ExploreIcon />, path: '/explore' },
   ];
 
   const drawer = (

@@ -1,182 +1,318 @@
-import React, { useState, useEffect } from "react";
-import "./EventCalendar.css"; // Import the CSS file
+import React, { useState, useCallback, useEffect } from 'react';
+import { Calendar, Clock, Plus, PlusCircle, Trash } from 'lucide-react';
+import axios from 'axios';
 
-// Helper function to get the current month's calendar
-const getCalendar = (year, month) => {
-  const firstDayOfMonth = new Date(year, month, 1).getDay(); // Day of the week (0-6)
-  const daysInMonth = new Date(year, month + 1, 0).getDate(); // Total days in the month
-  const prevMonthDays = new Date(year, month, 0).getDate(); // Days in the previous month
-
-  const calendar = [];
-  let day = 1 - firstDayOfMonth; // Start from the previous month's last days
-
-  for (let week = 0; week < 6; week++) {
-    const weekRow = [];
-    for (let weekday = 0; weekday < 7; weekday++) {
-      if (day < 1) {
-        // Previous month's days
-        weekRow.push({ day: prevMonthDays + day, currentMonth: false });
-      } else if (day > daysInMonth) {
-        // Next month's days
-        weekRow.push({ day: day - daysInMonth, currentMonth: false });
-      } else {
-        // Current month's days
-        weekRow.push({ day, currentMonth: true });
-      }
-      day++;
-    }
-    calendar.push(weekRow);
-    if (day > daysInMonth) break; // Stop after the last day of the month
-  }
-
-  return calendar;
-};
-
-export default function AdminEventCalendar() {
+const EventCalendar = ({ isAdmin = false }) => {
+  // ... [Previous state declarations remain the same] ...
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [calendar, setCalendar] = useState([]);
-  const [events, setEvents] = useState({});
-  const [showModal, setShowModal] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [showEventModal, setShowEventModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [eventDescription, setEventDescription] = useState("");
+  const [newEvent, setNewEvent] = useState({
+    title: '',
+    description: '',
+    time: '',
+    date: '',
+  });
+  const [isDark, setIsDark] = useState(false);
+  const [hoveredDate, setHoveredDate] = useState(null);
 
-  // Generate the calendar for the current month
+  // ... [Previous useEffect and helper functions remain the same] ...
   useEffect(() => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    setCalendar(getCalendar(year, month));
-  }, [currentDate]);
+    axios.get('http://localhost:5000/api/events')
+      .then(res => setEvents(res.data))
+      .catch(err => console.error(err));
+  }, []);
+  
 
-  // Format a date to "YYYY-MM-DD"
-  const formatDate = (year, month, day) => {
-    return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  };
+  useEffect(() => {
+    localStorage.setItem('calendarEvents', JSON.stringify(events));
+  }, [events]);
 
-  // Handle adding or updating an event
-  const handleAddEvent = () => {
-    if (!selectedDate || !eventDescription.trim()) return;
-
-    const newEvents = { ...events };
-    if (!newEvents[selectedDate]) {
-      newEvents[selectedDate] = [];
+  const getDaysInMonth = useCallback((date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const days = [];
+    
+    for (let i = 0; i < firstDay.getDay(); i++) {
+      days.push(null);
     }
-    newEvents[selectedDate].push(eventDescription);
-    setEvents(newEvents);
-    setShowModal(false);
-    setEventDescription("");
+    
+    for (let i = 1; i <= lastDay.getDate(); i++) {
+      days.push(new Date(year, month, i));
+    }
+    
+    return days;
+  }, []);
+
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const handlePrevMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
   };
 
-  // Handle removing an event
-  const handleRemoveEvent = (date, event) => {
-    const newEvents = { ...events };
-    newEvents[date] = newEvents[date].filter(e => e !== event);
-    setEvents(newEvents);
+  const handleNextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
   };
 
-  // Move to the previous month
-  const prevMonth = () => {
-    const prev = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-    setCurrentDate(prev);
+  const handleAddEvent = (e) => {
+    e.preventDefault();
+    axios.post('http://localhost:5000/api/events/add', newEvent)
+      .then(res => {
+        setEvents([...events, res.data]);
+        setShowEventModal(false);
+      })
+      .catch(err => console.error(err));
   };
 
-  // Move to the next month
-  const nextMonth = () => {
-    const next = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-    setCurrentDate(next);
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      const response = await fetch(`/api/events/${eventId}`, {
+        method: 'DELETE',
+      });
+  
+      if (response.ok) {
+        setEvents(prevEvents => prevEvents.filter(event => event._id !== eventId));
+        console.log('Event deleted successfully');
+      } else {
+        console.error('Failed to delete event');
+      }
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
+  };
+  
+  const getEventsForDate = useCallback((date) => {
+    return events.filter(event => event.date === date.toISOString().split('T')[0]);
+  }, [events]);
+
+  const handleDateClick = (date) => {
+    if (date) {
+      setSelectedDate(date);
+      setShowEventModal(true);
+      setNewEvent(prev => ({
+        ...prev,
+        date: date.toISOString().split('T')[0]
+      }));
+    }
   };
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  const openAddEventModal = () => {
+    setSelectedDate(new Date());
+    setNewEvent({
+      title: '',
+      description: '',
+      time: '',
+      date: new Date().toISOString().split('T')[0]
+    });
+    setShowEventModal(true);
+  };
 
   return (
-    <div className="calendar-container">
-      {/* Calendar Header */}
-      <div className="calendar-header">
-        <button onClick={prevMonth} className="nav-button">
-          &lt;
-        </button>
-        <h2 className="month-label">
-          {currentDate.toLocaleString("default", { month: "long" })} {year}
-        </h2>
-        <button onClick={nextMonth} className="nav-button">
-          &gt;
-        </button>
+    <div className={`max-w-4xl mx-auto p-4 ${isDark ? 'bg-gray-900 text-white' : 'bg-white'}`}>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
+        <div className="flex items-center gap-2">
+          <button 
+            className="p-2 rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+            onClick={handlePrevMonth}
+          >
+            ←
+          </button>
+          <div className="flex items-center gap-2">
+            <Calendar className="w-5 h-5" />
+            <h2 className="text-lg font-semibold">
+              {months[currentDate.getMonth()]} {currentDate.getFullYear()}
+            </h2>
+          </div>
+          <button 
+            className="p-2 rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+            onClick={handleNextMonth}
+          >
+            →
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={openAddEventModal}
+            className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded transition-colors"
+          >
+            <PlusCircle size={18} />
+            Add Event
+          </button>
+          <select
+            className="p-2 rounded border"
+            onChange={(e) => setCurrentDate(new Date(currentDate.getFullYear(), parseInt(e.target.value)))}
+            value={currentDate.getMonth()}
+          >
+            {months.map((month, index) => (
+              <option key={month} value={index}>{month}</option>
+            ))}
+          </select>
+          <button 
+            className="p-2 rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+            onClick={() => setIsDark(!isDark)}
+          >
+            Toggle Theme
+          </button>
+        </div>
       </div>
 
       {/* Calendar Grid */}
-      <div className="calendar-grid">
-        {/* Weekday Labels */}
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div key={day} className="weekday">
+      <div className="grid grid-cols-7 gap-1 border rounded-lg overflow-hidden">
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+          <div key={day} className="p-2 text-center font-bold bg-gray-100 text-sm">
             {day}
           </div>
         ))}
-
-        {/* Calendar Dates */}
-        {calendar.map((week, i) => (
-          <div key={i} className="week-row">
-            {week.map(({ day, currentMonth }, j) => {
-              const formattedDate = formatDate(year, month, day);
-              return (
-                <div
-                  key={j}
-                  className={`date-cell ${currentMonth ? "" : "not-current-month"}`}
-                  onClick={() => {
-                    if (currentMonth) {
-                      setSelectedDate(formattedDate);
-                      setShowModal(true);
-                    }
-                  }}
-                >
-                  <span>{day}</span>
-                  {/* Show event count if there are events */}
-                  {events[formattedDate] && (
-                    <div className="event-count">
-                      {events[formattedDate].length} event(s)
-                    </div>
+        
+        {getDaysInMonth(currentDate).map((date, index) => (
+          <div
+            key={index}
+            className={`min-h-[80px] p-2 border relative transition-all
+              ${date && date.toDateString() === new Date().toDateString() ? 'bg-blue-50' : 'bg-white'}
+              ${isDark ? 'bg-gray-800 border-gray-700' : ''}
+              ${date && hoveredDate === date.toDateString() ? 'bg-gray-50' : ''}
+              ${date ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+            onMouseEnter={() => date && setHoveredDate(date.toDateString())}
+            onMouseLeave={() => setHoveredDate(null)}
+            onClick={() => handleDateClick(date)}
+          >
+            {date && (
+              <>
+                <div className="flex justify-between items-start">
+                  <span>{date.getDate()}</span>
+                  {(isAdmin || getEventsForDate(date).length > 0) && (
+                    <button
+                      className={`p-1 rounded-full bg-blue-500 hover:bg-blue-600 text-white 
+                        transition-colors ${hoveredDate === date.toDateString() ? 'opacity-100' : 'opacity-0'}`}
+                    >
+                      <Plus size={16} />
+                    </button>
                   )}
                 </div>
-              );
-            })}
+                {getEventsForDate(date).length > 0 && (
+                  <div className="mt-1 space-y-1">
+                    {getEventsForDate(date).map(event => (
+                      <div 
+                        key={event.id}
+                        className="text-xs p-1 bg-blue-100 rounded truncate hover:bg-blue-200 transition-colors group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span>{event.title}</span>
+                          <Clock size={12} className="text-gray-500" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         ))}
       </div>
 
       {/* Event Modal */}
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Add Event for {selectedDate}</h3>
-            <textarea
-              value={eventDescription}
-              onChange={(e) => setEventDescription(e.target.value)}
-              placeholder="Enter event details..."
-            />
-            <button onClick={handleAddEvent}>Add Event</button>
-            <button onClick={() => setShowModal(false)}>Close</button>
+      {showEventModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className={`w-full max-w-md rounded-lg p-4 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                {selectedDate ? `Events for ${selectedDate.toLocaleDateString()}` : 'Add New Event'}
+              </h3>
+              <button 
+                className="text-2xl hover:text-gray-600"
+                onClick={() => setShowEventModal(false)}
+              >
+                ×
+              </button>
+            </div>
 
-            {/* List of existing events for the selected date */}
-            {events[selectedDate] && (
-              <div className="event-list">
-                <h4>Existing Events:</h4>
-                <ul>
-                  {events[selectedDate].map((event, index) => (
-                    <li key={index} className="event-item">
-                      {event}
-                      <button
-                        onClick={() => handleRemoveEvent(selectedDate, event)}
-                        className="remove-event"
-                      >
-                        Remove
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+            {selectedDate && getEventsForDate(selectedDate).length > 0 && (
+  <div className="mb-4 space-y-2">
+    <h4 className="font-medium">Existing Events:</h4>
+    {getEventsForDate(selectedDate).map(event => (
+      <div key={event._id} className="p-3 border rounded-lg hover:bg-gray-50 group">
+        <div className="flex justify-between items-start">
+          <div className="font-semibold">{event.title}</div>
+          <button
+            onClick={() => handleDeleteEvent(event._id)}
+            className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <Trash size={16} />
+          </button>
+        </div>
+        <div className="text-sm">{event.description}</div>
+        <div className="flex items-center gap-1 text-sm text-gray-600">
+          <Clock size={14} />
+          {event.time}
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+            
+            <form onSubmit={handleAddEvent} className="mt-4 space-y-3">
+              <input
+                type="text"
+                placeholder="Event Title"
+                className="w-full p-2 border rounded"
+                value={newEvent.title}
+                onChange={(e) => setNewEvent({
+                  ...newEvent,
+                  title: e.target.value,
+                })}
+                required
+              />
+              <textarea
+                placeholder="Description"
+                className="w-full p-2 border rounded"
+                value={newEvent.description}
+                onChange={(e) => setNewEvent({
+                  ...newEvent,
+                  description: e.target.value
+                })}
+              />
+              <div className="flex gap-2">
+                <input
+                  type="date"
+                  className="flex-1 p-2 border rounded"
+                  value={newEvent.date}
+                  onChange={(e) => setNewEvent({
+                    ...newEvent,
+                    date: e.target.value
+                  })}
+                  required
+                />
+                <input
+                  type="time"
+                  className="flex-1 p-2 border rounded"
+                  value={newEvent.time}
+                  onChange={(e) => setNewEvent({
+                    ...newEvent,
+                    time: e.target.value
+                  })}
+                  required
+                />
               </div>
-            )}
+              <button 
+                type="submit" 
+                className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                Add Event
+              </button>
+            </form>
           </div>
         </div>
       )}
     </div>
   );
-}
+};
+
+export default EventCalendar;

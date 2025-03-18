@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  AppBar, Box, Toolbar, IconButton, Typography, InputBase, Badge,
+  AppBar, Box, Toolbar, IconButton, Typography, Badge,
   MenuItem, Menu, Drawer, List, ListItem, ListItemIcon, ListItemText,
-  useScrollTrigger, Paper, Button, Fade, Tooltip, Avatar, Divider,
+  useScrollTrigger, Button, Fade, Tooltip, Avatar, Divider,
   useTheme, useMediaQuery
 } from '@mui/material';
 import {
   Menu as MenuIcon,
-  Search as SearchIcon,
+  
   Home as HomeIcon,
   PieChart as PollIcon,
   Notifications as NotificationsIcon,
@@ -48,7 +48,7 @@ const NavBar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchor, setNotificationAnchor] = useState(null);
-  const [searchFocused, setSearchFocused] = useState(false);
+  
   const [darkMode, setDarkMode] = useState(false);
   const location = useLocation();
   const theme = useTheme();
@@ -285,39 +285,7 @@ const NavBar = () => {
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Paper
-                component="form"
-                sx={{
-                  p: '2px 4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  width: searchFocused ? 300 : 300,
-                  mr: 2,
-                  borderRadius:'pill',
-                  transition: 'all 0.3s',
-                  backgroundColor: 'white',
-                  '&:hover': {
-                    backgroundColor: 'white',
-                  },
-                }}
-              >
-                <InputBase
-                  sx={{ 
-                    ml: 1, 
-                    flex: 1,
-                    color: 'inherit',
-                    '& ::placeholder': {
-                      color: 'black',
-                    },
-                  }}
-                  placeholder="Search..."
-                  onFocus={() => setSearchFocused(true)}
-                  onBlur={() => setSearchFocused(false)}
-                />
-                <IconButton sx={{ color: 'inherit' }}>
-                  <SearchIcon />
-                </IconButton>
-              </Paper>
+                
 
               <Tooltip title="Notifications">
                 <IconButton 

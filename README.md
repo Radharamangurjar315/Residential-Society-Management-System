@@ -1,1 +1,0 @@
-# Residential Society Management System

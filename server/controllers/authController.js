@@ -8,7 +8,7 @@
 //         try {
 //             const { 
 //                 name, 
-//                 email, 
+//                 email,  
 //                 password, 
 //                 societyName, 
 //                 apartmentNumber, 

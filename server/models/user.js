@@ -6,12 +6,16 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    phone: { 
+        type: String, required: true
+    },
     email: {
         type: String,
         required: true,
         unique: true,
         lowercase: true,
-        trim: true
+        trim: true,
+        match: [/.+\@.+\..+/, "Please enter a valid email address"]
     },
     password: {
         type: String,
@@ -19,13 +23,13 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['admin', 'resident', 'security', 'manager'],
-        default: 'resident'
+        enum: ['admin', 'resident'],
     },
     societyName: {
         type: String,
         required: true
     },
+    societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true }, // Link to society
     // apartmentNumber: {
     //     type: String,
     //     trim: true
@@ -48,4 +52,10 @@ const userSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('User', userSchema);
+userSchema.index({ email: 1, societyId: 1 }, { unique: true }); // Unique email per society
+userSchema.index({ phone: 1, societyId: 1 }, { unique: true }); // Unique phone per society
+
+
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;

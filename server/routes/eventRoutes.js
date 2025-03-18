@@ -1,9 +1,10 @@
 const express = require('express');
 const Event = require('../models/event');
 const router = express.Router();
+const permissionRole = require('../middlewares/permissionMiddleware');
 
 // Create a new event
-router.post('/add', async (req, res) => {
+router.post('/add',permissionRole(["admin"]), async (req, res) => {
   try {
     const event = new Event(req.body);
     await event.save();
@@ -24,7 +25,7 @@ router.get('/', async (req, res) => {
 });
 
 // Delete an event
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',permissionRole(["admin"]), async (req, res) => {
     try {
       const eventId = req.params.id;
       await Event.findByIdAndDelete(eventId);

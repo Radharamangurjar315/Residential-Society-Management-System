@@ -10,6 +10,7 @@ const eventRoutes = require('./routes/eventRoutes');
 const pollRoutes = require('./routes/pollRoutes');
 const helmet = require("helmet");
 const mediaRoutes = require("./routes/mediaRoutes");
+const noticeRoutes = require('./routes/noticeRoutes');
 dotenv.config();
 
 const port = 5000;
@@ -27,6 +28,7 @@ require('./models/notice');
 require('./models/media');
 
 const requireAuth = require('./middlewares/requiredLogin');  // Import the updated middleware
+const notice = require('./models/notice');
 
 
 app.use(express.json()); // to parse the incoming request with json payload
@@ -36,7 +38,8 @@ app.use(helmet()); // Secure HTTP headers
 app.use(compression()); // Compress responses
 app.use(morgan("combined")); // Logging
 
-app.use('/api/events', eventRoutes);  
+app.use('/api/events', eventRoutes); 
+app.use('/api/notices', noticeRoutes); 
 app.use('/api/polls', pollRoutes);  
 app.use("/api/media", mediaRoutes);
 

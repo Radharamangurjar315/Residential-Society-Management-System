@@ -7,7 +7,7 @@ const permissionRole = (permissions) => {
         console.log("Query:", req.query);
 
         const userRole = req.user ? req.user.role : req.body.role; // Check if using authentication
-        console.log("Extracted User Role:", userRole);
+        console.log("Extracted User Role:", userRole); 
 
         if (permissions.includes(userRole)) {
             next();

@@ -1,16 +1,26 @@
 const express = require('express');
 const Event = require('../models/event');
 const router = express.Router();
-const permissionRole = require('../middlewares/permissionMiddleware');
+// const permissionRole = require('../middlewares/permissionMiddleware');
+const {verifyAdmin} = require('../middlewares/verifyAdmin');
+
 
 // Create a new event
-router.post('/add',permissionRole(["admin"]), async (req, res) => {
+router.post("/add", verifyAdmin, async (req, res) => {
   try {
-    const event = new Event(req.body);
-    await event.save();
-    res.status(201).json(event);
+    const { title, date, description } = req.body;
+
+    if (!title || !date || !description) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const newEvent = new Event({ title, date, description, createdBy: req.params.id });
+    await newEvent.save();
+
+    res.status(201).json({ message: "Event added successfully", event: newEvent });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Error adding event:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -25,7 +35,7 @@ router.get('/', async (req, res) => {
 });
 
 // Delete an event
-router.delete('/:id',permissionRole(["admin"]), async (req, res) => {
+router.delete('/:id',verifyAdmin, async (req, res) => {
     try {
       const eventId = req.params.id;
       await Event.findByIdAndDelete(eventId);

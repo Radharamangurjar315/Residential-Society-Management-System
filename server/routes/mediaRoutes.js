@@ -1,53 +1,49 @@
 const express = require("express");
-const multer = require("multer");
-const cloudinary = require("cloudinary").v2;
-const Media = require("../models/media");
-
 const router = express.Router();
+const upload = require("../middlewares/upload");
+const Media = require("../models/media");
+const cloudinary = require("../config/cloudinary");
+const { verifyAdmin } = require("../middlewares/verifyAdmin");
 
-// Configure Cloudinary
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+// **1. Upload Media (Admin only)**
+router.post("/upload", verifyAdmin, upload.single("file"), async (req, res) => {
+  try {
+    const newMedia = new Media({
+      url: req.file.path,
+      public_id: req.file.filename,
+      uploadedBy: req.user.id,
+      societyId: req.user.societyId, // Ensure the user has a societyId
+    });
+    await newMedia.save();
+    res.status(201).json({ success: true, media: newMedia });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Upload failed", error });
+  }
 });
 
-// Multer Storage (Buffer Storage for Direct Upload to Cloudinary)
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
-// Upload Media
-router.post("/upload", upload.single("file"), async (req, res) => {
-    try {
-        if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-
-        cloudinary.uploader.upload_stream(
-            { resource_type: "auto" },
-            async (error, result) => {
-                if (error) return res.status(500).json({ error });
-
-                const media = new Media({
-                    url:"cloudinary://616267911111457:g4ytaTCgwzXU7i4PCSgBe85BUiU@raman-scloud",
-                    type: req.file.mimetype,
-                });
-
-                await media.save();
-                res.status(201).json(media);
-            }
-        ).end(req.file.buffer);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+// **2. Get All Media for a Society (Residents & Admins)**
+router.get("/mediagallery/:societyId", async (req, res) => {
+  try {
+    const media = await Media.find({ societyId: req.params.societyId });
+    res.status(200).json({ success: true, media });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error fetching media", error });
+  }
 });
 
-// Fetch All Media
-router.get("/", async (req, res) => {
-    try {
-        const media = await Media.find().sort({ createdAt: -1 });
-        res.json(media);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+// **3. Delete Media (Admin only)**
+router.delete("/:id", verifyAdmin, async (req, res) => {
+  try {
+    const media = await Media.findById(req.params.id);
+    if (!media) return res.status(404).json({ success: false, message: "Media not found" });
+
+    await cloudinary.uploader.destroy(media.public_id); // Delete from Cloudinary
+    await media.deleteOne(); // Delete from DB
+
+    res.status(200).json({ success: true, message: "Media deleted" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error deleting media", error });
+  }
 });
 
 module.exports = router;

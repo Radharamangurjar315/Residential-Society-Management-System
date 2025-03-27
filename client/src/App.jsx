@@ -9,6 +9,8 @@ import Polls from "@/components/Polls";
 import EventCalendar from "@/components/EventCalendar";
 import Explore from "@/components/Explore";
 import Notice from "@/components/Notice";
+import MediaGallery from "@/components/MediaGallery";
+import AdminUpload from "./components/AdminUpload";
 // import Maintenance from "@/components/Maintenance";  // Assuming a maintenance component
 
 function App() {
@@ -37,6 +39,10 @@ function App() {
                 <Route path="/explore" element={user ? <Explore /> : <Navigate to="/signin" />} />
                 <Route path="/events" element={user ? <EventCalendar user={user} /> : <Navigate to="/signin" />} />
                 <Route path="/notices" element={user ? <Notice user={user} /> : <Navigate to="/signin" />} />
+                <Route path="/mediagallery" element={user ? <MediaGallery user={user} /> : <Navigate to="/signin" />} />
+                <Route path="/adminupload" element={user ? <AdminUpload user={user} /> : <Navigate to="/signin" />} />
+
+            
                 {/* <Route path="/maintenance" element={user ? <Maintenance user={user} /> : <Navigate to="/signin" />} /> */}
 
                 {/* Catch-All Redirect */}

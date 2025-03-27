@@ -1,0 +1,45 @@
+.gallery-container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .media-card {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  video {
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  .download-btn {
+    display: block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+  
+  .download-btn:hover {
+    background-color: #0056b3;
+  }
+  

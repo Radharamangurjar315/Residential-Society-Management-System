@@ -16,87 +16,67 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import Container from '@mui/material/Container';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import axios from 'axios';
 
 function NoticePage() {
   const [notices, setNotices] = useState([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
-  const [userRole, setUserRole] = useState(false);
+  const [userRole, setUserRole] = useState('');
+  const [societyId, setSocietyId] = useState(null);
   const [loading, setLoading] = useState(false);
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUserRole(parsedUser.role);
-      console.log("Fetched User Role:", parsedUser.role);
-    }
-  }, []);
 
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/notices");
-        const data = await response.json();
-        setNotices(data);
+        const storedUser = localStorage.getItem("user");
+        if (!storedUser) return;
+        const parsedUser = JSON.parse(storedUser);
+        setUserRole(parsedUser.role);
+        setSocietyId(parsedUser.societyId);
+    
+        if (!parsedUser.societyId) return;
+    
+        const token = localStorage.getItem("token");
+        if (!token) return;
+    
+        // Ensure the URL and query parameters are correct
+        const response = await axios.get(`http://localhost:5000/api/notices`, {
+          headers: { "Authorization": `Bearer ${token}` },
+          params: { societyId: parsedUser.societyId }, // Correctly passing societyId as a query parameter
+        });
+    
+        setNotices(response.data);
       } catch (error) {
         console.error("Error fetching notices:", error);
+        setNotices([]);
       }
     };
-    
+
     fetchNotices();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (userRole !== "admin") {
-      alert("Access Denied! Only admins can add notices.");
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      console.error("No token found. User must be logged in.");
-      return;
-    }
-
-    if (!title.trim() || !content.trim()) return;
-
-    const newNotice = {
-      title: title.trim(),
-      content: content.trim(),
-      date: new Date().toISOString().split("T")[0],
-    };
+    if (userRole !== "admin" || !title.trim() || !content.trim() || !societyId) return;
 
     try {
-      const response = await fetch("http://localhost:5000/api/notices", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(newNotice),
+      const token = localStorage.getItem("token");
+      const newNotice = { title, content, societyId, date: new Date().toISOString() };
+      const response = await axios.post("http://localhost:5000/api/notices", newNotice, {
+        headers: { "Authorization": `Bearer ${token}` }
       });
-
-      const data = await response.json();
-      if (response.ok) {
-        setNotices(prev => [data, ...prev]);
-        setTitle('');
-        setContent('');
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 3000);
-      } else {
-        console.error("Error adding notice:", data.message);
-      }
+      setNotices([response.data, ...notices]);
+      setTitle('');
+      setContent('');
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 2000);
     } catch (error) {
-      console.error("Fetch Error:", error);
+      console.error("Error adding notice:", error);
     }
   };
 
@@ -147,7 +127,7 @@ function NoticePage() {
       setLoading(false);
     }
   };
-  
+
   return (
     <Box sx={{ 
       width: '100%', 
@@ -333,5 +313,6 @@ function NoticePage() {
     </Box>
   );
 }
+
 
 export default NoticePage;

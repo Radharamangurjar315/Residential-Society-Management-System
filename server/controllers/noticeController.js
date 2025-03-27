@@ -1,71 +1,108 @@
-const Notice = require('../models/notice');
+const mongoose = require("mongoose");
+const Notice = require("../models/notice");
 
-// Get all notices (accessible to all users)
+// ✅ Fetch notices by societyId (accessible to all users)
 const getNotices = async (req, res) => {
     try {
-        const notices = await Notice.find().sort({ date: -1 });
-        res.json(notices);
+      const { societyId } = req.query; // Ensure societyId is extracted from req.query
+  
+      // Validate societyId
+      if (!societyId || !mongoose.Types.ObjectId.isValid(societyId)) {
+        return res.status(400).json({ error: "Invalid society ID format" });
+      }
+  
+      console.log(`Fetching notices for Society ID: ${societyId}`);
+  
+      // Fetch notices sorted by latest date
+      const notices = await Notice.find({ societyId }).sort({ date: -1 });
+  
+      if (notices.length === 0) {
+        return res.status(404).json({ message: "No notices found for this society" });
+      }
+  
+      res.json(notices);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+      console.error("❌ Error fetching notices:", error.message);
+      res.status(500).json({ message: "Internal Server Error" });
     }
-};
+  };
 
-// Add a new notice (only for admin, handled by verifyAdmin middleware)
+// ✅ Add a new notice (Only for Admins)
 const addNotice = async (req, res) => {
     try {
-        console.log("Received request to add notice:", req.body);
+        const { title, content, societyId } = req.body;
 
-        const { title, content } = req.body;
+        if (!title || !content || !societyId) {
+            return res.status(400).json({ message: "Title, content, and societyId are required" });
+        }
 
-        if (!title || !content) {
-            console.error("❌ Missing title or content");
-            return res.status(400).json({ message: "Title and content are required" });
+        if (!mongoose.Types.ObjectId.isValid(societyId)) {
+            return res.status(400).json({ message: "Invalid society ID" });
         }
 
         const newNotice = new Notice({
             title,
             content,
-            date: new Date().toISOString().split("T")[0],
+            societyId,
+            date: Date.now(),
         });
 
         const savedNotice = await newNotice.save();
-        console.log("✅ Notice saved successfully:", savedNotice);
-        
+        console.log("✅ Notice added successfully:", savedNotice);
+
         res.status(201).json(savedNotice);
     } catch (error) {
-        console.error("❌ Error adding notice:", error);  // Logs the actual error
-        res.status(500).json({ message: "Server Error", error: error.message });
+        console.error("❌ Error adding notice:", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
-
-
-// Update a notice (only for admin)
+// ✅ Update a notice (Only for Admins)
 const updateNotice = async (req, res) => {
     const { id } = req.params;
-    const { title, description, date } = req.body;
+    const { title, content, date } = req.body;
 
     try {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid notice ID" });
+        }
+
         const updatedNotice = await Notice.findByIdAndUpdate(
-            id, 
-            { title, description, date }, 
+            id,
+            { title, content, date },
             { new: true }
         );
+
+        if (!updatedNotice) {
+            return res.status(404).json({ message: "Notice not found" });
+        }
+
         res.json(updatedNotice);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        console.error("❌ Error updating notice:", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
-// Delete a notice (only for admin)
+// ✅ Delete a notice (Only for Admins)
 const deleteNotice = async (req, res) => {
     const { id } = req.params;
 
     try {
-        await Notice.findByIdAndDelete(id);
-        res.json({ message: 'Notice deleted' });
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid notice ID" });
+        }
+
+        const deletedNotice = await Notice.findByIdAndDelete(id);
+
+        if (!deletedNotice) {
+            return res.status(404).json({ message: "Notice not found" });
+        }
+
+        res.json({ message: "Notice deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        console.error("❌ Error deleting notice:", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 };
 

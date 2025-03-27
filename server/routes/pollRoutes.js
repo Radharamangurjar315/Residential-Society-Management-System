@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const Poll = require('../models/poll');
 const permissionRole = require('../middlewares/permissionMiddleware');
 const router = express.Router();
@@ -6,14 +7,15 @@ const router = express.Router();
 // Create Poll (Admin Only)
 router.post('/create', async (req, res) => {
   try {
-    const { question, options, duration } = req.body;
-    if (!question || options.length < 2) {
+    const { question, options, societyId, duration } = req.body;
+    if (!question || options.length < 2 || !societyId) {
       return res.status(400).json({ message: "A poll must have a question and at least two options." });
     }
 
     const poll = new Poll({
       question,
       options: options.map(option => ({ text: option.text, votes: 0 })), // Ensure correct structure
+      societyId,
       duration,
       createdAt: new Date()
     });
@@ -28,29 +30,44 @@ router.post('/create', async (req, res) => {
 // Get All Polls (Public)
 router.get('/', async (req, res) => {
   try {
-    const polls = await Poll.find();
+    const { societyId } = req.query;
+    // Validate societyId
+          if (!societyId || !mongoose.Types.ObjectId.isValid(societyId)) {
+            return res.status(400).json({ error: "Invalid society ID format" });
+          }
+          console.log(`Fetching polls for Society ID: ${societyId}`);
+    const polls = await Poll.find({societyId}).sort({ createdAt: -1 });
+    if (polls.length === 0) {
+      return res.status(404).json({ message: "No notices found for this society" });
+    }
+
     res.status(200).json(polls);
   } catch (error) {
     res.status(500).json({ message: "Server error fetching polls" });
   }
 });
 
-// Get a Single Poll
-router.get('/:id', async (req, res) => {
-  try {
-    const poll = await Poll.findById(req.params.id);
-    if (!poll) {
-      return res.status(404).json({ message: "Poll not found" });
-    }
-    res.status(200).json(poll);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// // Get a Single Poll
+// router.get('/:id', async (req, res) => {
+//   try {
+//     const poll = await Poll.findById(req.params.id);
+//     if (!poll) {
+//       return res.status(404).json({ message: "Poll not found" });
+//     }
+//     res.status(200).json(poll);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 // Delete Poll (Admin Only)
 router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
   try {
+    
+     if (!mongoose.Types.ObjectId.isValid(id)) {
+                return res.status(400).json({ message: "Invalid polls ID" });
+            }
     
     const deletedPoll = await Poll.findByIdAndDelete(req.params.id);
 
@@ -67,8 +84,8 @@ router.delete('/:id', async (req, res) => {
 router.post('/:id/vote', async (req, res) => {
   console.log("Incoming vote request:", req.body);  // Log request data
   try {
-    const { userId, optionIndex } = req.body;
-    if (!userId) {
+    const { userId, optionIndex, societyId } = req.body;
+    if (!userId || !societyId) {
       return res.status(400).json({ message: "User ID is required to vote" });
     }
 

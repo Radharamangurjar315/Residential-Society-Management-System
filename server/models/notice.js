@@ -9,6 +9,7 @@ const noticeSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true }, // Ensure this field exists
     date: {
         type: Date,
         required: true,

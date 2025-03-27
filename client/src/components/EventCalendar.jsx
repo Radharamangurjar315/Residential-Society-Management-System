@@ -10,50 +10,88 @@ const EventCalendar = () => {
   const [newEvent, setNewEvent] = useState({
     title: '',
     description: '',
-    time: '',
+    time: '', 
     date: '',
+    location: '',
+    societyId: ''
   });
   const [isDark, setIsDark] = useState(false);
   const [hoveredDate, setHoveredDate] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Fetch user role from localStorage
   useEffect(() => {
-    const storedUser = localStorage.getItem("user"); // Retrieve user data from localStorage
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser); // Parse the JSON string
-      setUserRole(parsedUser.role); // Set user role
-      console.log("Fetched User Role:", parsedUser.role); // Debugging
+      const parsedUser = JSON.parse(storedUser);
+      setUserRole(parsedUser.role);
+      console.log("Fetched User Role:", parsedUser.role);
     }
   }, []);
   
-  
-  // Check screen size on mount and when window resizes
+  // Responsive design - check screen size
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 640);
     };
     
-    // Initial check
     handleResize();
-    
-    // Add event listener
     window.addEventListener('resize', handleResize);
     
-    // Clean up
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Fetch events from backend
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      
+      const user = JSON.parse(localStorage.getItem("user"));
+      const societyId = user?.societyId;
+      
+      if (!societyId) {
+        console.error("❌ Society ID is missing from localStorage.");
+        setEvents([]);
+        setError("No society ID found");
+        return;
+      }
+
+      const response = await axios.get(`http://localhost:5000/api/events?societyId=${societyId}`);
+      
+      console.log("Raw Events Response:", response.data);
+
+      // Ensure it's always an array and has the expected structure
+      const fetchedEvents = Array.isArray(response.data) 
+        ? response.data 
+        : (response.data.data || []);
+
+      console.log("Processed Events:", fetchedEvents);
+
+      setEvents(fetchedEvents);
+      setError(null);
+    } catch (err) {
+      console.error("❌ Error fetching events:", err);
+      setError(err.message || "Failed to fetch events");
+      setEvents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch events on component mount
   useEffect(() => {
-    axios.get('http://localhost:5000/api/events')
-      .then(res => setEvents(res.data))
-      .catch(err => console.error(err));
+    fetchEvents();
   }, []);
 
+  // Save events to local storage when they change
   useEffect(() => {
     localStorage.setItem('calendarEvents', JSON.stringify(events));
   }, [events]);
 
+  // Get days in current month
   const getDaysInMonth = useCallback((date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -77,50 +115,96 @@ const EventCalendar = () => {
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  // Navigate to previous month
   const handlePrevMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
   };
 
+  // Navigate to next month
   const handleNextMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
   };
 
-  
+  // Get events for a specific date
+  const getEventsForDate = useCallback((date) => {
+    const formattedDate = date.toLocaleDateString('en-CA'); // Get local YYYY-MM-DD format
+    return events.filter(event => {
+      const eventDate = new Date(event.date).toLocaleDateString('en-CA');
+      return eventDate === formattedDate;
+    });
+  }, [events]);
 
-  const handleAddEvent = async (event) => {
-    event.preventDefault();
-  
+  // Add new event
+  const handleAddEvent = async (e) => {
+    e.preventDefault();
+    
     const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("Token missing, user not authenticated");
+    const storedUser = localStorage.getItem("user");
+    const parsedUser = JSON.parse(storedUser);
+    const societyId = parsedUser?.societyId;
+    
+    if (!societyId) {
+      alert("Society ID missing - please log in again");
+      return;
+    }
+  
+    if (!newEvent.title || !newEvent.date || !newEvent.time || !newEvent.location) {
+      alert("Please fill all required fields");
       return;
     }
   
     try {
+      const eventDateTime = new Date(`${newEvent.date}T${newEvent.time}:00Z`); // Append 'Z' to force UTC
+
+      console.log("Event Date (Raw):", newEvent.date);
+      console.log("Event Time (Raw):", newEvent.time);
+      console.log("Converted DateTime:", eventDateTime.toISOString());
+
+      
       const response = await axios.post(
-        "http://localhost:5000/api/events/add",
-        newEvent, // ✅ Use the correct state object
-        { headers: { Authorization: `Bearer ${token}` } }
+        'http://localhost:5000/api/events/add',
+        {
+          title: newEvent.title,
+          description: newEvent.description,
+          date: eventDateTime.toISOString(),
+          societyId,
+          location: newEvent.location
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
       );
   
-      console.log("Event added successfully:", response.data);
+      if (response.data.success && response.data.data) {
+        setEvents((prevEvents) => [...prevEvents, response.data.data]);
+      }
   
-      setEvents([...events, response.data.event]); // Update UI
-      setNewEvent({ title: "", description: "", time: "", date: "" }); // Reset fields
+      setNewEvent({
+        title: '',
+        description: '',
+        time: '',
+        location: '',
+        date: ''
+      });
+  
       setShowEventModal(false);
+      fetchEvents();
     } catch (error) {
-      console.error("Error adding event:", error.response?.data || error.message);
-      setShowEventModal(false);
-      alert("Only admin can add events!!Failed.");
-      
+      console.error("Error:", error.response?.data || error.message);
+      alert(`Failed: ${error.response?.data?.message || error.message}`);
     }
+    setShowEventModal(false);
   };
   
-  
-  
+  // Delete an event
   const handleDeleteEvent = async (eventId) => {
     try {
         const token = localStorage.getItem("token"); // Ensure token is retrieved correctly
+        const storedUser = localStorage.getItem("user");
+        const parsedUser = JSON.parse(storedUser);
 
         const response = await fetch(`/api/events/${eventId}`, {
             method: "DELETE",
@@ -149,44 +233,33 @@ const EventCalendar = () => {
         
     }
 };
+  // Handle date click to open event modal
+  const handleDateClick = (date) => {
+    if (date) {
+      setSelectedDate(date);
+      setShowEventModal(true);
+      setNewEvent(prev => ({
+        ...prev,
+        date: date.toLocaleDateString('en-CA') // Ensure local format YYYY-MM-DD
+      }));
+    }
+  };
 
-  
-  
-  
-  
-const getEventsForDate = useCallback((date) => {
-  const formattedDate = date.toLocaleDateString('en-CA'); // Get local YYYY-MM-DD format
-  return events.filter(event => {
-    const eventDate = new Date(event.date).toLocaleDateString('en-CA');
-    return eventDate === formattedDate;
-  });
-}, [events]);
+  // Open add event modal
+  const openAddEventModal = () => {
+    const today = new Date();
+    const localDate = today.toLocaleDateString('en-CA');
 
-const handleDateClick = (date) => {
-  if (date) {
-    setSelectedDate(date);
+    setSelectedDate(today);
+    setNewEvent({
+      title: '',
+      description: '',
+      time: '',
+      location: '',
+      date: localDate
+    });
     setShowEventModal(true);
-    setNewEvent(prev => ({
-      ...prev,
-      date: date.toLocaleDateString('en-CA') // Ensure local format YYYY-MM-DD
-    }));
-  }
-};
-
-const openAddEventModal = () => {
-  const today = new Date();
-  const localDate = today.toLocaleDateString('en-CA'); // YYYY-MM-DD format in local time
-
-  setSelectedDate(today);
-  setNewEvent({
-    title: '',
-    description: '',
-    time: '',
-    date: localDate // Ensure correct local date is set
-  });
-  setShowEventModal(true);
-};
-
+  };
 
   return (
     <div className={`w-full max-w-4xl mx-auto p-2 sm:p-4 ${isDark ? 'bg-gray-900 text-white' : 'bg-white'}`}>
@@ -245,38 +318,50 @@ const openAddEventModal = () => {
             ))}
           </select>
         </div>
+
+        {/* Loading and Error States */}
+        {loading && (
+          <div className="text-center p-4 text-blue-500">
+            Loading events...
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center p-4 text-red-500">
+            Error: {error}
+          </div>
+        )}
       </div>
 
       {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1 border rounded-lg overflow-hidden">
-  {/* Show day names with abbreviated versions on mobile */}
-  {isMobile 
-    ? ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
-        <div key={index} className="p-1 sm:p-2 text-center font-bold bg-gray-100 text-xs sm:text-sm">
-          {day}
-        </div>
-      ))
-    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-        <div key={index} className="p-1 sm:p-2 text-center font-bold bg-gray-100 text-xs sm:text-sm">
-          {day}
-        </div>
-      ))
-  }  
+        {/* Day Names */}
+        {isMobile 
+          ? ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
+              <div key={index} className="p-1 sm:p-2 text-center font-bold bg-gray-100 text-xs sm:text-sm">
+                {day}
+              </div>
+            ))
+          : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
+              <div key={index} className="p-1 sm:p-2 text-center font-bold bg-gray-100 text-xs sm:text-sm">
+                {day}
+              </div>
+            ))
+        }  
         
         {/* Calendar days */}
         {getDaysInMonth(currentDate).map((date, index) => (
           <div
-          key={index}
-          className={`min-h-[40px] sm:min-h-[50px] p-0.5 sm:p-1 border relative transition-all
-            ${date && date.toDateString() === new Date().toDateString() ? 'bg-blue-50' : 'bg-white'}
-            ${isDark ? 'bg-gray-800 border-gray-700' : ''}
-            ${date && hoveredDate === date.toDateString() ? 'bg-gray-50' : ''}
-            ${date ? 'cursor-pointer hover:bg-gray-50' : ''}`}
-          onMouseEnter={() => date && setHoveredDate(date.toDateString())}
-          onMouseLeave={() => setHoveredDate(null)}
-          onClick={() => handleDateClick(date)}
-        >
-        
+            key={index}
+            className={`min-h-[40px] sm:min-h-[50px] p-0.5 sm:p-1 border relative transition-all
+              ${date && date.toDateString() === new Date().toDateString() ? 'bg-blue-50' : 'bg-white'}
+              ${isDark ? 'bg-gray-800 border-gray-700' : ''}
+              ${date && hoveredDate === date.toDateString() ? 'bg-gray-50' : ''}
+              ${date ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+            onMouseEnter={() => date && setHoveredDate(date.toDateString())}
+            onMouseLeave={() => setHoveredDate(null)}
+            onClick={() => date && handleDateClick(date)}
+          >
             {date && (
               <>
                 <div className="flex justify-between items-start">
@@ -294,7 +379,6 @@ const openAddEventModal = () => {
                 {getEventsForDate(date).length > 0 && (
                   <div className="mt-1 space-y-1 overflow-hidden">
                     {getEventsForDate(date).map((event, idx) => (
-                      // On mobile, show only the first event with a counter if there are more
                       (isMobile && idx > 0) ? (
                         idx === 1 && (
                           <div key="more-events" className="text-xs p-1 bg-gray-100 rounded text-center">
@@ -303,7 +387,7 @@ const openAddEventModal = () => {
                         )
                       ) : (
                         <div 
-                          key={event.id}
+                          key={event._id}
                           className="text-xs p-1 bg-blue-100 rounded truncate hover:bg-blue-200 transition-colors group"
                         >
                           <div className="flex items-center justify-between">
@@ -321,7 +405,7 @@ const openAddEventModal = () => {
         ))}
       </div>
 
-      {/* Event Modal - Full screen on mobile */}
+      {/* Event Modal */}
       {showEventModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 sm:p-4 z-50">
           <div className="w-full h-full sm:h-auto sm:max-w-md rounded-none sm:rounded-lg p-4 bg-white dark:bg-gray-800 overflow-y-auto">
@@ -357,7 +441,7 @@ const openAddEventModal = () => {
                     <div className="text-sm">{event.description}</div>
                     <div className="flex items-center gap-1 text-sm text-gray-600">
                       <Clock size={14} />
-                      {event.time}
+                      {new Date(event.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </div>
                   </div>
                 ))}
@@ -384,6 +468,17 @@ const openAddEventModal = () => {
                   ...newEvent,
                   description: e.target.value
                 })}
+              />
+              <input
+                type="text"
+                placeholder="Event Location"
+                className="w-full p-2 border rounded"
+                value={newEvent.location}
+                onChange={(e) => setNewEvent({
+                  ...newEvent,
+                  location: e.target.value,
+                })}
+                required
               />
               <div className="flex flex-col sm:flex-row gap-2">
                 <input

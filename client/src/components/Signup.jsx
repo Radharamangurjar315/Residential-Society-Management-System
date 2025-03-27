@@ -7,9 +7,11 @@ const Signup = () => {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("resident"); // Default role is 'resident'
     const [societyName, setSocietyName] = useState("");
+    const [address, setAddress] = useState("");
     const [loading, setLoading] = useState(false);
 
     // Function to validate email format
@@ -18,7 +20,7 @@ const Signup = () => {
     };
 
     const PostData = async () => {
-        if (!name || !email || !password || !societyName) {
+        if (!name || !email || !phone || !password || !societyName || !address) {
             M.toast({ html: "All fields are required!", classes: "red darken-3" });
             return;
         }
@@ -39,9 +41,11 @@ const Signup = () => {
                 body: JSON.stringify({
                     name,
                     email,
+                    phone,
                     password,
                     role,
                     societyName,
+                    address,
                 }),
             });
 
@@ -78,6 +82,12 @@ const Signup = () => {
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <input
+                    type="number"
+                    placeholder="Phone Number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                />
+                <input
                     type="password"
                     placeholder="Password"
                     value={password}
@@ -88,6 +98,12 @@ const Signup = () => {
                     placeholder="Society Name"
                     value={societyName}
                     onChange={(e) => setSocietyName(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Society Address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
                 />
                 
                 {/* Role Selection */}

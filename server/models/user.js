@@ -6,9 +6,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    phone: { 
-        type: String, required: true
-    },
+    
     email: {
         type: String,
         required: true,
@@ -16,6 +14,9 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         trim: true,
         match: [/.+\@.+\..+/, "Please enter a valid email address"]
+    },
+    phone: { 
+        type: String, required: true
     },
     password: {
         type: String,
@@ -30,22 +31,6 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true }, // Link to society
-    // apartmentNumber: {
-    //     type: String,
-    //     trim: true
-    // },
-    // contactNumber: {
-    //     type: String,
-    //     trim: true
-    // },
-    // isActive: {
-    //     type: Boolean,
-    //     default: true
-    // },
-    // profilePicture: {
-    //     type: String,
-    //     default: ''
-    // },
     registeredAt: {
         type: Date,
         default: Date.now

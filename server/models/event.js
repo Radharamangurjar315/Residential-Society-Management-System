@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
+  societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
   date: { type: Date, required: true },
-  location: { type: String },
+  location: { type: String, required: true }, 
 });
 
 module.exports = mongoose.model('Event', eventSchema);

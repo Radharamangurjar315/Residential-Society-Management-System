@@ -6,6 +6,7 @@ const pollSchema = new mongoose.Schema({
     {
       text: String,
       votes: { type: Number, default: 0 }
+      
     }
   ],
   voters: [
@@ -15,6 +16,7 @@ const pollSchema = new mongoose.Schema({
       votedAt: { type: Date, default: Date.now }
     }
   ],
+  societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
   createdAt: { type: Date, default: Date.now },
   duration: { type: Number, required: true }
 });

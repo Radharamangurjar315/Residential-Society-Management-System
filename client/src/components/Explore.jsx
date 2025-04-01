@@ -40,6 +40,18 @@ export default function ActionAreaCard() {
         console.log('Bills clicked');
         window.location.href = '/bills';
         break;
+      case 'Media Upload':
+        console.log('Media upload clicked');
+        window.location.href = '/adminupload';
+        break;
+      case 'Media Gallery':
+        console.log('Gallery clicked');
+        window.location.href = '/mediagallery';
+        break;
+      case 'File a Complaint':
+        console.log('Complaints clicked');
+        window.location.href = '/filecomplaint';
+        break;
       default:
         break;
     }
@@ -65,20 +77,38 @@ export default function ActionAreaCard() {
       image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
       title: "MAINTENANCE AND BILLS",
       description: "Pay your bills online easily and securely!!"
-    }
+    },
+    {
+      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
+      title: "Media Upload",
+      description: "Pay your bills online easily and securely!!"
+    },
+    {
+      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
+      title: "Media Gallery",
+      description: "Pay your bills online easily and securely!!"
+    },
+    {
+      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
+      title: "File a Complaint",
+      description: "Pay your bills online easily and securely!!"
+    },
   ];
 
   return (
     <Box 
-      sx={{ 
-        flexGrow: 1, 
-        p: 2,
-        // Add stable width to prevent resize loops
-        width: '100%',
-        maxWidth: '1200px',
-        margin: '0 auto'
-      }}
-    >
+    sx={{ 
+      flexGrow: 1, 
+      p: 2,
+      width: '100%',
+      maxWidth: '1200px',
+      margin: '0 auto',
+      height: 'calc(100vh - 80px)', // Adjust for taskbar height (modify 80px as needed)
+      overflowY: 'auto'  // Enable vertical scrolling if needed
+    }}
+  >
+  
+
       <Grid 
         container 
         spacing={2}
@@ -117,7 +147,7 @@ export default function ActionAreaCard() {
                 <CardMedia
                   component="img"
                   sx={{
-                    height: 200,  // Fixed height
+                    height: 200,  //  height
                     objectFit: 'cover'
                   }}
                   image={card.image}

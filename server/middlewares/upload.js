@@ -6,7 +6,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "society_media",
-    allowed_formats: ["jpg", "png", "mp4", "jpeg", "gif"],
+    allowed_formats: ["jpg", "png", "mp4", "jpeg", "gif", "pdf", "pptx", "docx"],
   },
 });
 

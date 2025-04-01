@@ -6,8 +6,8 @@ const { JWT_SECRET } = require('../keys');
 const requiredLogin = require('../middlewares/requiredLogin');
 const User = mongoose.model("User");
 const Society = mongoose.model("Society");
-const { admin, bucket } = require('../firebase/firebaseAdmin');
 const Event = mongoose.model("Event");
+
 
 const router = express.Router();
 

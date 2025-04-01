@@ -11,6 +11,7 @@ const pollRoutes = require('./routes/pollRoutes');
 const helmet = require("helmet");
 const mediaRoutes = require("./routes/mediaRoutes");
 const noticeRoutes = require('./routes/noticeRoutes');
+const complaintRoutes = require('./routes/complaintRoutes'); // Import the complaint routes
 dotenv.config();
 
 const port = 5000;
@@ -26,6 +27,7 @@ require('./models/poll');
 require('./models/event');
 require('./models/notice');
 require('./models/media');
+require('./models/complaint');  // Import the Complaint model
 
 const requireAuth = require('./middlewares/requiredLogin');  // Import the updated middleware
 const notice = require('./models/notice');
@@ -42,6 +44,11 @@ app.use('/api/events', eventRoutes);
 app.use('/api/notices', noticeRoutes); 
 app.use('/api/polls', pollRoutes);  
 app.use("/api/media", mediaRoutes);
+app.use((req, res, next) => {
+    console.log(`🔹 Incoming ${req.method} request to ${req.url}`);
+    next();
+  });
+app.use('/api/complaints', complaintRoutes); // Use the complaint routes
 
 mongoose.connect(MONGOURI);
 mongoose.connection.on('connected', () => {

@@ -52,6 +52,13 @@ export default function ActionAreaCard() {
         console.log('Complaints clicked');
         window.location.href = '/filecomplaint';
         break;
+        case 'Complaints Dashboard':
+        console.log('Complaints');
+        window.location.href = '/admincomplaints';
+        break;
+        case 'Contacts Directory':
+        window.location.href = '/contacts';
+        break;
       default:
         break;
     }
@@ -81,17 +88,27 @@ export default function ActionAreaCard() {
     {
       image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
       title: "Media Upload",
-      description: "Pay your bills online easily and securely!!"
+      description: "Upload your media easily and securely!!"
     },
     {
       image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
       title: "Media Gallery",
-      description: "Pay your bills online easily and securely!!"
+      description: "See all the media!!"
     },
     {
       image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
       title: "File a Complaint",
-      description: "Pay your bills online easily and securely!!"
+      description: "File a complaint easily and securely!!"
+    },
+    {
+      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
+      title: "Complaints Dashboard",
+      description: "See all the complaints!!"
+    },
+    {
+      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
+      title: "Contacts Directory",
+      description: "Get all the contacts!!"
     },
   ];
 

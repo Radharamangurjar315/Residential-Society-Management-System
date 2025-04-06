@@ -13,6 +13,7 @@ import MediaGallery from "@/components/MediaGallery";
 import AdminUpload from "./components/AdminUpload";
 import AdminComplaint from "./components/AdminComplaint";
 import ComplaintFile from "./components/ComplaintFile";
+import Contact from "./components/Contact";
 // import Maintenance from "@/components/Maintenance";  // Assuming a maintenance component
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
                 <Route path="/adminupload" element={user ? <AdminUpload user={user} /> : <Navigate to="/signin" />} />
                 <Route path="/admincomplaints" element={user ? <AdminComplaint user={user} /> : <Navigate to="/signin" />} />
                 <Route path="/filecomplaint" element={user ? <ComplaintFile user={user} /> : <Navigate to="/signin" />} />
+                <Route path="/contacts" element={user ? <Contact user={user} /> : <Navigate to="/signin" />} />
 
             
                 {/* <Route path="/maintenance" element={user ? <Maintenance user={user} /> : <Navigate to="/signin" />} /> */}

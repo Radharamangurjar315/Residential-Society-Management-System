@@ -12,6 +12,9 @@ const helmet = require("helmet");
 const mediaRoutes = require("./routes/mediaRoutes");
 const noticeRoutes = require('./routes/noticeRoutes');
 const complaintRoutes = require('./routes/complaintRoutes'); // Import the complaint routes
+const contactRoutes = require('./routes/contactRoutes'); // Import the contact routes
+const visitorRoutes = require('./routes/visitorRoutes'); // Import the visitor routes
+
 dotenv.config();
 
 const port = 5000;
@@ -28,6 +31,8 @@ require('./models/event');
 require('./models/notice');
 require('./models/media');
 require('./models/complaint');  // Import the Complaint model
+require('./models/contact');  // Import the Contact model
+require('./models/visitor');  // Import the Visitor model
 
 const requireAuth = require('./middlewares/requiredLogin');  // Import the updated middleware
 const notice = require('./models/notice');
@@ -44,6 +49,9 @@ app.use('/api/events', eventRoutes);
 app.use('/api/notices', noticeRoutes); 
 app.use('/api/polls', pollRoutes);  
 app.use("/api/media", mediaRoutes);
+app.use('/api/contacts', contactRoutes); // Use the contact routes
+app.use('/api/visitors', visitorRoutes);
+
 app.use((req, res, next) => {
     console.log(`🔹 Incoming ${req.method} request to ${req.url}`);
     next();

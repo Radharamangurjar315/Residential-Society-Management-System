@@ -16,7 +16,7 @@ router.post("/add", verifyAdmin, async (req, res) => {
       name,
       designation,
       phone,
-      societyId: req.user.societyId,
+      societyId: req.user.societyId, 
     });
     const saved = await contact.save();
     res.status(201).json(saved);

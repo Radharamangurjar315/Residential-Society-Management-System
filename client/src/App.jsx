@@ -14,7 +14,17 @@ import AdminUpload from "./components/AdminUpload";
 import AdminComplaint from "./components/AdminComplaint";
 import ComplaintFile from "./components/ComplaintFile";
 import Contact from "./components/Contact";
-// import Maintenance from "@/components/Maintenance";  // Assuming a maintenance component
+import ForgotPassword from "./components/screens/ForgotPassword";
+
+// import OtpRequest from "./components/screens/otpRequest";
+// import OtpVerify from "./components/screens/otpVerify";
+// import ResetPassword from "./components/screens/ResetPassword";
+// import VisitorForm from "./components/visitor/VisitorForm";
+// import VisitorList from "./components/visitor/VisitorList";
+// import VisitorCard from "./components/visitor/VisitorCard";
+import MaintenanceForm from "./components/payments/MaintenanceForm";
+import MaintenanceDashboard from "./components/payments/MaintenanceDashboard";
+// import UserDetails from "@/components/utils/UserDetails";
 
 function App() {
     const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")) || null);
@@ -47,10 +57,20 @@ function App() {
                 <Route path="/admincomplaints" element={user ? <AdminComplaint user={user} /> : <Navigate to="/signin" />} />
                 <Route path="/filecomplaint" element={user ? <ComplaintFile user={user} /> : <Navigate to="/signin" />} />
                 <Route path="/contacts" element={user ? <Contact user={user} /> : <Navigate to="/signin" />} />
+                {/* <Route path="/visitorform" element={user ? <VisitorForm user={user} societyId={user.societyId} /> : <Navigate to="/signin" />} />
+                <Route path="/visitorcard" element={user ? <VisitorCard user={user} societyId={user.societyId} /> : <Navigate to="/signin" />} />
+                <Route path="/visitorlist" element={user ? <VisitorList user={user}  societyId={user.societyId}/> : <Navigate to="/signin" />} />
+                
+                 */}
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/maintenanceform" element={user ? <MaintenanceForm user={user} /> : <Navigate to="/signin" />} />
+                <Route path="/maintenancedashboard" element={user ? <MaintenanceDashboard user={user} /> : <Navigate to="/signin" />} />
+                    {/* <Route path = "/userdetails" element = {<UserDetails/>}/> */}
 
-            
-                {/* <Route path="/maintenance" element={user ? <Maintenance user={user} /> : <Navigate to="/signin" />} /> */}
-
+                    {/* <Route path="/otp-request" element={<OtpRequest type="login" />} />
+<Route path="/forgot-password" element={<OtpRequest type="fp" />} />
+<Route path="/verify-otp" element={<OtpVerify />} />
+<Route path="/reset-password" element={<ResetPassword />} /> */}
                 {/* Catch-All Redirect */}
                 <Route path="*" element={<Navigate to={user ? "/home" : "/signin"} />} />
             </Routes>

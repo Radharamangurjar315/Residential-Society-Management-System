@@ -90,3 +90,30 @@
 .auth-card h6 a:hover {
   color: #1e3c72;
 }
+.toast {
+  border-radius: 10px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  font-weight: 500;
+  color: #fff !important;
+}
+
+.toast.green {
+  background-color: #43a047 !important; /* Better green */
+}
+
+.toast.red {
+  background-color: #e53935 !important; /* Rich red */
+}
+
+.toast.blue {
+  background-color: #1e88e5 !important; /* Calm blue */
+}
+
+.toast-container {
+  top: 20px !important;
+  right: 20px !important;
+  left: unset !important;
+  bottom: unset !important;
+  position: fixed !important;
+  z-index: 9999 !important;
+}

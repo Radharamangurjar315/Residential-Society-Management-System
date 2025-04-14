@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+// import Profile  from './Profile';
 import { 
   AppBar, Box, Toolbar, IconButton, Typography, Badge,
   MenuItem, Menu, Drawer, List, ListItem, ListItemIcon, ListItemText,
@@ -48,7 +49,8 @@ const NavBar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchor, setNotificationAnchor] = useState(null);
-  
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")) || null);
+  const [name, setName] = useState(user ? user.name : '');
   const [darkMode, setDarkMode] = useState(false);
   const location = useLocation();
   const theme = useTheme();
@@ -101,7 +103,7 @@ const NavBar = () => {
           Signed in as
         </Typography>
         <Typography variant="subtitle1" fontWeight="bold">
-          user@example.com
+          {name}
         </Typography>
       </Box>
       <Divider />
@@ -109,21 +111,12 @@ const NavBar = () => {
         <ListItemIcon><AccountCircle /></ListItemIcon>
         Profile
       </MenuItem>
-      <MenuItem component={Link} to="/bookmarks" onClick={handleMenuClose}>
-        <ListItemIcon><BookmarkIcon /></ListItemIcon>
-        Bookmarks
-      </MenuItem>
+      
       <MenuItem component={Link} to="/settings" onClick={handleMenuClose}>
         <ListItemIcon><SettingsIcon /></ListItemIcon>
         Settings
       </MenuItem>
       <Divider />
-      <MenuItem onClick={toggleDarkMode}>
-        <ListItemIcon>
-          {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
-        </ListItemIcon>
-        {darkMode ? 'Light Mode' : 'Dark Mode'}
-      </MenuItem>
     </Menu>
   );
 

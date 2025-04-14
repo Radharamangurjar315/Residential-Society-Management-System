@@ -3,36 +3,42 @@ const Complaint = require("../models/complaint");
 
 // 📌 Resident files a complaint
 const fileComplaint = async (req, res) => {
-    try {
-    
+  try {
+    const start = performance.now();
 
-      console.log("🔹 Incoming Complaint Data:", req.body); // Log request data
-      console.log("🔹 Authenticated User:", req.user); // Log extracted user details
-  
-      const { title, description, attachments} = req.body;
-  
-      if (!title || !description) {
-        return res.status(400).json({ success: false, message: "Title and description are required!" });
-      }
-  
-      const complaint = new Complaint({
-        societyId: req.user.societyId,
-        residentId: req.user.id,
-        title,
-        description,
-        attachments
-      });
-  
-      await complaint.save();
-      console.log("✅ Complaint saved successfully!");
-  
-      res.status(201).json({ success: true, message: "Complaint filed successfully!", complaint });
-    } catch (error) {
-      console.error("❌ Server Error:", error);
-      res.status(500).json({ success: false, message: "Server error", error: error.message });
+    console.log("🔹 Incoming Complaint Data:", req.body);
+    console.log("🔹 Authenticated User:", req.user);
+
+    const { title, description, attachments } = req.body;
+
+    if (!title || !description) {
+      return res.status(400).json({ success: false, message: "Title and description are required!" });
     }
-  };
-  
+
+    const complaint = new Complaint({
+      societyId: req.user.societyId,
+      residentId: req.user.id,
+      title,
+      description,
+      attachments
+    });
+
+    const saveStart = performance.now();
+    await complaint.save();
+    const saveEnd = performance.now();
+
+    const end = performance.now();
+
+    console.log(`✅ Complaint saved! Save time: ${Math.round(saveEnd - saveStart)}ms, Total time: ${Math.round(end - start)}ms`);
+
+    res.status(201).json({ success: true, message: "Complaint filed successfully!", complaint });
+    console.log("📤 Response sent to client.");
+  } catch (error) {
+    console.error("❌ Server Error:", error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
+
 
 // 📌 Get complaints (Residents see their complaints, Admins see all in their society)
 const getComplaints = async (req, res) => {

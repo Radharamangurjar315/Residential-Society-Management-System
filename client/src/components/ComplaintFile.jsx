@@ -35,25 +35,18 @@ const ComplaintFile = () => {
     setSuccess(false);
 
     try {
-      
-
       console.log("Submitting:", formData);
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-
+      const start = performance.now();
       const response = await fetch("http://localhost:5000/api/complaints/file", {
         method: "POST",
-        signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(formData),
       });
-
-      clearTimeout(timeoutId);
-
+      const end = performance.now();
+console.log(`⏱️ Complaint request took ${Math.round(end - start)}ms`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
@@ -61,14 +54,16 @@ const ComplaintFile = () => {
 
       const data = await response.json();
       console.log("Success:", data);
-      setSuccess(true);
-      navigate('/admincomplaints')
       setFormData({ title: "", description: "" }); // Reset form
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/admincomplaints');
+      }, 1000); // Give a small delay to show success message
+      
     } catch (error) {
       console.error("❌ Error filing complaint:", error);
     
-      const responseText = await error.response?.text();
-      console.log("❌ Backend response:", responseText); // Log full response
+      setError(error?.message || "Something went wrong while filing the complaint.");
     }
     finally {
       setLoading(false);

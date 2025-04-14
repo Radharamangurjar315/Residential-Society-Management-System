@@ -38,7 +38,7 @@ export default function ActionAreaCard() {
         break;
       case 'MAINTENANCE AND BILLS':
         console.log('Bills clicked');
-        window.location.href = '/bills';
+        window.location.href = '/maintenanceform';
         break;
       case 'Media Upload':
         console.log('Media upload clicked');
@@ -58,6 +58,15 @@ export default function ActionAreaCard() {
         break;
         case 'Contacts Directory':
         window.location.href = '/contacts';
+        break;
+        case 'Visitor Form':
+        window.location.href = '/visitorform';
+        break;
+        case 'Visitor List':
+        window.location.href = '/visitorlist';
+        break;
+        case 'Visitor Card':
+        window.location.href = '/visitorcard';
         break;
       default:
         break;
@@ -86,29 +95,44 @@ export default function ActionAreaCard() {
       description: "Pay your bills online easily and securely!!"
     },
     {
-      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
+      image: "https://t4.ftcdn.net/jpg/05/65/22/41/360_F_565224180_QNRiRQkf9Fw0dKRoZGwUknmmfk51SuSS.jpg",
       title: "Media Upload",
       description: "Upload your media easily and securely!!"
     },
     {
-      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
+      image: "https://media.istockphoto.com/id/1493434989/photo/150-individual-personalities-collage.jpg?s=612x612&w=0&k=20&c=llR17KeI9vsu7Rb_WaItj6cidJA2QhiTN32_j-kJB6I=",
       title: "Media Gallery",
       description: "See all the media!!"
     },
     {
-      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
+      image: "https://cms-prod.s3.ap-south-1.amazonaws.com/How_To_File_A_Complaint_Against_An_Insurance_Company_In_India_Beshak_1c7b5e94d4.png",
       title: "File a Complaint",
       description: "File a complaint easily and securely!!"
     },
     {
-      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMTVg0dJg2ZDepbphSCup8mJQ2-p-7quxATw&s",
       title: "Complaints Dashboard",
       description: "See all the complaints!!"
     },
     {
-      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
+      image: "https://media.istockphoto.com/id/956261774/vector/contact-book-icon-vector.jpg?s=612x612&w=0&k=20&c=KXO7oPuhTVPKIHCyFjC4SwzZlnjDmfn66GVoqkviDFc=",
       title: "Contacts Directory",
       description: "Get all the contacts!!"
+    },
+    {
+      image: "https://www.shutterstock.com/image-vector/visitor-icon-vector-isolated-on-260nw-2045904857.jpg",
+      title: "Visitor Form",
+      description: "Fill the visitor form!!"
+    },
+    {
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7sTHqLWByi3mtxed7L5hDSNMKysC56KIKVg&s",
+      title: "Visitor List",
+      description: "See all the visitors!!"
+    },
+    {
+      image: "https://t3.ftcdn.net/jpg/04/75/01/62/360_F_475016277_uAsyHtSrdSWQMgTRNEsV8PLvDKEbEFXm.jpg",
+      title: "Visitor Card",
+      description: "See all the visitor cards!!"
     },
   ];
 

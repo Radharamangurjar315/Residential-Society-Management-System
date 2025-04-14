@@ -6,10 +6,53 @@ const { JWT_SECRET } = require('../keys');
 const requiredLogin = require('../middlewares/requiredLogin');
 const User = mongoose.model("User");
 const Society = mongoose.model("Society");
-const Event = mongoose.model("Event");
-
+// const Event = mongoose.model("Event");
+require('dotenv').config();
+const otpStore = {}; // { email: { otp, expiresAt } }
+const nodemailer = require('nodemailer');
 
 const router = express.Router();
+// Create Nodemailer transporter using Gmail
+const transporter = nodemailer.createTransport({
+    service: 'gmail',  // You can replace this with other email services
+    auth: {
+        user: 'radharamangurjar4104@gmail.com', // Replace with your Gmail address
+        pass: 'mjty qmxq gdqv tmkx', // Your Gmail app password (NOT regular Gmail password)
+    },
+});
+const otpGenerator = require('otp-generator');
+
+// Route to send OTP to email
+router.post('/api/auth/send-otp', async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(422).json({ error: "Please provide an email" });
+    }
+
+    const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, alphabets: false }); // Generate a 6-digit OTP
+    const expiresAt = Date.now() + 5 * 60 * 1000; // OTP expires in 5 minutes
+
+    // Store OTP with expiration time
+    otpStore[email] = { otp, expiresAt };
+
+    const mailOptions = {
+        from: 'Societyy societyyoficial@gmail.com',  // Replace with your email
+        to: email,
+        subject: 'Your OTP Code',
+        html: `<p>Your OTP is <strong>${otp}</strong>. It will expire in 5 minutes.</p>`,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);  // Send OTP via email
+        res.json({ message: 'OTP sent successfully' });
+    } catch (err) {
+        console.error('Error sending OTP email:', err);
+        res.status(500).json({ error: 'Failed to send OTP' });
+    }
+});
+
+
 
 // ✅ Hash function for Society ID Generation
 const generateSocietyId = (societyName) => {
@@ -33,10 +76,7 @@ router.get('/societyId', (req, res) => {
     res.json({ societyName, societyId });
 });
 
-// ✅ Protected Route Example
-router.get('/protected', requiredLogin, (req, res) => {
-    res.send("Hello Duniya");
-});
+
 
 // ✅ Get User Details
 router.get("/getUser", requiredLogin, async (req, res) => {
@@ -117,5 +157,85 @@ router.post('/api/auth/signin', async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+
+// Route to verify OTP
+router.post('/api/auth/verify-otp', (req, res) => {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+        return res.status(422).json({ error: "Please provide both email and OTP" });
+    }
+
+    const storedData = otpStore[email];
+
+    if (!storedData) {
+        return res.status(400).json({ error: "No OTP request found for this email" });
+    }
+
+    const { otp: storedOtp, expiresAt } = storedData;
+
+    if (Date.now() > expiresAt) {
+        delete otpStore[email];
+        return res.status(400).json({ error: "OTP expired. Please request a new one." });
+    }
+
+    if (otp !== storedOtp) {
+        return res.status(400).json({ error: "Invalid OTP. Please try again." });
+    }
+
+    // OTP is valid
+    delete otpStore[email]; // Optional: Remove OTP after successful verification
+
+    res.json({ message: "OTP verified successfully" });
+});
+
+
+// Reset password after OTP verification
+router.post('/api/auth/reset-password', async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+        return res.status(422).json({ error: "Please provide email, OTP, and new password" });
+    }
+
+    const storedData = otpStore[email];
+
+    if (!storedData) {
+        return res.status(400).json({ error: "No OTP request found for this email" });
+    }
+
+    const { otp: storedOtp, expiresAt } = storedData;
+
+    if (Date.now() > expiresAt) {
+        delete otpStore[email];
+        return res.status(400).json({ error: "OTP expired. Please request again." });
+    }
+
+    if (otp !== storedOtp) {
+        return res.status(400).json({ error: "Invalid OTP" });
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
+        const updatedUser = await User.findOneAndUpdate(
+            { email },
+            { password: hashedPassword },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        delete otpStore[email]; // remove OTP after successful reset
+
+        res.json({ message: "Password reset successfully" });
+    } catch (err) {
+        console.error("Reset Password Error:", err);
+        res.status(500).json({ error: "Server error while resetting password" });
+    }
+});
+
 
 module.exports = router;

@@ -53,10 +53,11 @@ function NoticePage() {
         if (!token) return;
     
         // Ensure the URL and query parameters are correct
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/notices`, {
-          headers: { "Authorization": `Bearer ${token}` },
-          params: { societyId: parsedUser.societyId }, // Correctly passing societyId as a query parameter
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/notices`, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { societyId: parsedUser.societyId },
         });
+        
     
         setNotices(response.data);
       } catch (error) {
@@ -75,7 +76,7 @@ function NoticePage() {
     try {
       const token = localStorage.getItem("token");
       const newNotice = { title, content, societyId, date: new Date().toISOString() };
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/notices`, newNotice, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/notices`, newNotice, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       setNotices([response.data, ...notices]);
@@ -112,7 +113,7 @@ function NoticePage() {
       setLoading(true);
       const token = localStorage.getItem("token");
   
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/notices/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notices/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,

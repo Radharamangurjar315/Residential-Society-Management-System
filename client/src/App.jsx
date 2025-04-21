@@ -18,12 +18,14 @@ import ForgotPassword from "./components/screens/ForgotPassword";
 import Visitors from "./components/visitor/Visitors";
 import MaintenanceForm from "./components/payments/MaintenanceForm";
 import MaintenanceDashboard from "./components/payments/MaintenanceDashboard";
-// import UserDetails from "@/components/utils/UserDetails";
 
 function App() {
     const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")) || null);
 
     useEffect(() => {
+        // 🧪 TESTING VITE_API_URL
+        console.log("🧪 VITE_API_URL:", import.meta.env.VITE_API_URL);
+
         if (user) {
             localStorage.setItem("user", JSON.stringify(user));
         } else {
@@ -35,13 +37,11 @@ function App() {
         <BrowserRouter>
             <NavBar user={user} setUser={setUser} />
             <Routes>
-                {/* Public Routes - Only accessible before login */}
                 <Route path="/signin" element={!user ? <Signin setUser={setUser} /> : <Navigate to="/home" />} />
                 <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/home" />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
 
-                {/* Private Routes - Accessible after login */}
-                <Route path="/home" element={ <Home /> } />
+                <Route path="/home" element={<Home />} />
                 <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/signin" />} />
                 <Route path="/polls" element={user ? <Polls user={user} /> : <Navigate to="/signin" />} />
                 <Route path="/explore" element={user ? <Explore /> : <Navigate to="/signin" />} />
@@ -56,8 +56,7 @@ function App() {
                 <Route path="/maintenanceform" element={user ? <MaintenanceForm user={user} /> : <Navigate to="/signin" />} />
                 <Route path="/maintenancedashboard" element={user ? <MaintenanceDashboard user={user} /> : <Navigate to="/signin" />} />
                 
-                {/* Catch-All Redirect */}
-                <Route path="*" element={<Navigate to={ "/home"} />} />
+                <Route path="*" element={<Navigate to="/home" />} />
             </Routes>
         </BrowserRouter>
     );

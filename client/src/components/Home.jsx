@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const navigate = useNavigate();
+
   useEffect(() => {
     const shouldRefresh = localStorage.getItem("refreshHomeOnce");
     if (shouldRefresh === "true") {

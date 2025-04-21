@@ -21,11 +21,22 @@ import MaintenanceDashboard from "./components/payments/MaintenanceDashboard";
 
 function App() {
     const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")) || null);
+    useEffect(() => {
+        fetch("https://residential-society-management-system.onrender.com/api/test", {
+          method: "GET",
+          credentials: "include", // since you're using credentials: true
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("✅ CORS Test Response:", data);
+          })
+          .catch((err) => {
+            console.error("❌ CORS Error:", err);
+          });
+      }, []);
+      
 
     useEffect(() => {
-        // 🧪 TESTING VITE_API_URL
-        console.log("🧪 VITE_API_URL:", import.meta.env.VITE_API_URL);
-
         if (user) {
             localStorage.setItem("user", JSON.stringify(user));
         } else {

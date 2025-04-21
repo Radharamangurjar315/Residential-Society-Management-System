@@ -1,7 +1,13 @@
+
+
+const cors = require("cors");
 const express = require('express');
 const dotenv = require("dotenv");
+dotenv.config();
 const app = express();
 app.use(express.json()); // to parse the incoming request with json payload
+
+
 const mongoose = require('mongoose');
 
 const compression = require("compression");
@@ -18,16 +24,26 @@ const visitorRoutes = require('./routes/visitorRoutes'); // Import the visitor r
 const maintenanceRoutes = require('./routes/maintenanceRoutes'); // Import the maintenance routes
 
 
-dotenv.config();
 
 const port = 5000;
-const cors = require('cors');
-const allowedOrigins = ["https://societyy-rsms-rg.vercel.app"];
-app.use(cors({
-   origin: allowedOrigins, // will update later
-  credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
+
+
+const allowedOrigins = [
+    "http://localhost:5173",  // for local development
+    "https://residential-society-management-systemfrontend-4hkhc63lz.vercel.app",
+    "https://residential-society-managem-git-f5dea8-ramans-projects-f78a9e3f.vercel.app"
+  ];
+
+  app.use(cors({
+    origin: "*",  // Allow ALL origins temporarily for testing
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }));
+
+
+
+
 
 // database connection key fetch
 const { MONGOURI } = process.env;
@@ -80,7 +96,13 @@ mongoose.connection.on('error', (err) => {
 app.get('/', (req, res) => {
     res.send("Hello minor project");
 });
-
+app.get("/api/test", (req, res) => {
+    res.json({
+      message: "CORS test successful",
+      origin: req.headers.origin,
+    });
+  });
+  
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

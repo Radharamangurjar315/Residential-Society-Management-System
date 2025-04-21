@@ -24,19 +24,26 @@ const port = 5000;
 const cors = require('cors');
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://your-frontend-name.vercel.app", // will update later
+    "https://societyy-rsms-rg.vercel.app/", // will update later
   ];
   
-  app.use(cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS not allowed"));
-      }
-    },
-    credentials: true
-  }));
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    console.log("Request from origin:", origin); // <- Debug here
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS not allowed"));
+    }
+  },
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 
 // database connection key fetch
 const { MONGOURI } = process.env;

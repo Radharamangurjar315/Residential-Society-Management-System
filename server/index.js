@@ -22,7 +22,21 @@ dotenv.config();
 
 const port = 5000;
 const cors = require('cors');
-app.use(cors());
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://your-frontend-name.vercel.app", // will update later
+  ];
+  
+  app.use(cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
+    credentials: true
+  }));
 
 // database connection key fetch
 const { MONGOURI } = require('./keys');

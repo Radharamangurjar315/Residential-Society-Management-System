@@ -22,10 +22,11 @@ dotenv.config();
 
 const port = 5000;
 const cors = require('cors');
-
+const allowedOrigins = ["https://societyy-rsms-rg.vercel.app"];
 app.use(cors({
-   origin: "https://societyy-rsms-rg.vercel.app/", // will update later
+   origin: allowedOrigins, // will update later
   credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 // database connection key fetch

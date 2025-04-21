@@ -39,7 +39,7 @@ const allowedOrigins = [
   }));
 
 // database connection key fetch
-const { MONGOURI } = require('./keys');
+const { MONGOURI } = process.env;
 require('./models/user');
 require('./models/society');
 require('./models/user');  // Ensure the User model includes a 'role' field

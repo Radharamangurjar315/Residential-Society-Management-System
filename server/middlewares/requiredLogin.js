@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../keys");
+const JWT_SECRET = process.env.JWT_SECRET;
 const User = require("../models/user");
 
 // Middleware for authentication

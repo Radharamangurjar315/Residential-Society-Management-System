@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user"); // Import user model
-const { JWT_SECRET } = require("../keys"); // Import JWT secret key
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const verifyAdmin = async (req, res, next) => {
     try {

@@ -86,7 +86,7 @@ const MediaGallery = ({ user }) => {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/media/mediagallery/${societyId}`,
+          `${import.meta.env.VITE_API_URL}/api/media/mediagallery/${societyId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
             signal: controller.signal
@@ -121,7 +121,7 @@ const MediaGallery = ({ user }) => {
     if (!window.confirm("Are you sure you want to delete this media?")) return;
 
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/media/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/media/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

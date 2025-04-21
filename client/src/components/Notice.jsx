@@ -25,6 +25,8 @@ import Divider from '@mui/material/Divider';
 import Avatar from '@mui/material/Avatar';
 import { format } from 'date-fns';
 
+
+
 function NoticePage() {
   const [notices, setNotices] = useState([]);
   const [title, setTitle] = useState('');
@@ -37,6 +39,7 @@ function NoticePage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isMedium = useMediaQuery(theme.breakpoints.down('md'));
+  console.log("Base API URL:", import.meta.env.VITE_API_URL);
 
   useEffect(() => {
     const fetchNotices = async () => {

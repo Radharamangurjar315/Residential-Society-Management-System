@@ -32,7 +32,7 @@ const Complaints = () => {
 
   const fetchComplaints = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/complaints/${societyId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/complaints/${societyId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`, // Use token for authentication
@@ -64,7 +64,7 @@ const Complaints = () => {
         }
       }
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/complaints/update/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/complaints/update/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

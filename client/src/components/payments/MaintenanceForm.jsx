@@ -16,7 +16,7 @@ export default function SubmitMaintenanceForm() {
     setStatus({ type: '', message: '' });
     
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/maintenance/submit`, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/maintenance/submit`, {
         amount,
         paymentMethod: method,
         transactionId: txn,

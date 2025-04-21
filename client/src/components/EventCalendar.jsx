@@ -57,7 +57,7 @@ const EventCalendar = () => {
         return;
       }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/events?societyId=${societyId}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/events?societyId=${societyId}`);
       
 
       // Ensure it's always an array and has the expected structure
@@ -151,7 +151,7 @@ const EventCalendar = () => {
       const eventDateTime = new Date(`${newEvent.date}T${newEvent.time}:00Z`); // Append 'Z' to force UTC
       
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/events/add`,
+        `${import.meta.env.VITE_API_URL}/api/events/add`,
         {
           title: newEvent.title,
           description: newEvent.description,
@@ -195,7 +195,7 @@ const EventCalendar = () => {
         const storedUser = localStorage.getItem("user");
         const parsedUser = JSON.parse(storedUser);
 
-        const response = await fetch(`/api/events/${eventId}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/events/${eventId}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${token}`,

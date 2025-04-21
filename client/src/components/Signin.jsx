@@ -23,7 +23,7 @@ const Signin = ({ setUser }) => {
     }
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/send-otp`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -45,7 +45,7 @@ const Signin = ({ setUser }) => {
   const verifyOtp = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/verify-otp`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
@@ -72,7 +72,7 @@ const Signin = ({ setUser }) => {
     }
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/signin`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

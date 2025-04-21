@@ -16,7 +16,7 @@ const ContactsList = () => {
 
   const fetchContacts = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/contacts/${societyId}`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/contacts/${societyId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -37,7 +37,7 @@ const ContactsList = () => {
     e.preventDefault();
     try {
       const newContact = { name, designation, phone };
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/contacts/add`, newContact, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/contacts/add`, newContact, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

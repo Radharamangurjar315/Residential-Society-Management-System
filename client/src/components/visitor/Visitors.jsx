@@ -56,7 +56,7 @@ const Visitors = () => {
   const fetchVisitors = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5000/api/visitors/${user.societyId}`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/visitors/${user.societyId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setVisitors(res.data);
@@ -72,7 +72,7 @@ const Visitors = () => {
     e.preventDefault();
     try {
       await axios.post(
-        "http://localhost:5000/api/visitors/add",
+        `${process.env.REACT_APP_API_URL}/api/visitors/add`,
         { ...form, societyId: user.societyId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -88,7 +88,7 @@ const Visitors = () => {
   const updateStatus = async (id, status) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/visitors/status/${id}`,
+        `${process.env.REACT_APP_API_URL}/api/visitors/status/${id}`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -103,7 +103,7 @@ const Visitors = () => {
   const markExit = async (id) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/visitors/exit/${id}`,
+        `${process.env.REACT_APP_API_URL}/api/visitors/exit/${id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

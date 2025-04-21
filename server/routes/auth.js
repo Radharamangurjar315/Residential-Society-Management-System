@@ -1,13 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = process.env.JWT_SECRET;
+const  JWT_SECRET  = process.env.JWT_SECRET;
 const requiredLogin = require('../middlewares/requiredLogin');
 const User = mongoose.model("User");
 const Society = mongoose.model("Society");
 // const Event = mongoose.model("Event");
-require('dotenv').config();
+
 const otpStore = {}; // { email: { otp, expiresAt } }
 const nodemailer = require('nodemailer');
 

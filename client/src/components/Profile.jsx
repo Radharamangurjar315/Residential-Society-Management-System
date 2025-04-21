@@ -19,7 +19,7 @@ const Profile = () => {
             throw new Error("Authentication token not found");
           }
           
-          const response = await fetch("/getUser", {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/getUser`, {
             method: "GET",
             headers: {
               "Authorization": `Bearer ${token}`,

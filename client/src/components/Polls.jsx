@@ -16,7 +16,7 @@ const PollSystem = ({ user }) => {
     }
   
     try {
-      const response = await fetch(`http://localhost:5000/api/polls?societyId=${encodeURIComponent(user.societyId)}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/polls?societyId=${encodeURIComponent(user.societyId)}`);
       
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
@@ -41,7 +41,7 @@ const PollSystem = ({ user }) => {
     if (user.role !== 'admin') return setError('Only admins can create polls.');
 
     try {
-      const response = await fetch('http://localhost:5173/api/polls/create', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/polls/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -61,7 +61,7 @@ const PollSystem = ({ user }) => {
 
   const deletePoll = async (pollId) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/polls/${pollId}`);
+      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/api/polls/${pollId}`);
       
       if (response.status === 200) {
         // Update state by filtering out deleted poll
@@ -83,7 +83,7 @@ const PollSystem = ({ user }) => {
     try {
       console.log("Voting with:", { userId: user._id, userName: user.name, optionIndex });
   
-      const response = await fetch(`http://localhost:5000/api/polls/${pollId}/vote`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/polls/${pollId}/vote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user._id, optionIndex, userName: user.name, societyId: user.societyId })

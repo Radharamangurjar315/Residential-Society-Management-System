@@ -22,28 +22,11 @@ dotenv.config();
 
 const port = 5000;
 const cors = require('cors');
-const allowedOrigins = [
-    "http://localhost:5173",
-    "https://societyy-rsms-rg.vercel.app/", // will update later
-  ];
-  
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
-    console.log("Request from origin:", origin); // <- Debug here
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("CORS not allowed"));
-    }
-  },
-  credentials: true
-};
-
-app.use(cors(corsOptions));
+app.use(cors({
+   origin: "https://societyy-rsms-rg.vercel.app/", // will update later
+  credentials: true,
+}));
 
 // database connection key fetch
 const { MONGOURI } = process.env;

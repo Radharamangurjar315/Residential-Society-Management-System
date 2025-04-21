@@ -13,7 +13,7 @@ export default function MaintenanceDashboard({ societyId }) {
       const user = JSON.parse(localStorage.getItem('user'));
       const activeSocietyId = user.societyId || societyId; // Use passed societyId if available
       
-      const { data } = await axios.get(`http://localhost:5000/api/maintenance/all/${activeSocietyId}`, {
+      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/api/maintenance/all/${activeSocietyId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -36,7 +36,7 @@ export default function MaintenanceDashboard({ societyId }) {
   const handleVerify = async (id, status) => {
     try {
       setIsLoading(true);
-      await axios.put(`http://localhost:5000/api/maintenance/verify/${id}`, 
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/maintenance/verify/${id}`, 
         { status }, 
         {
           headers: {

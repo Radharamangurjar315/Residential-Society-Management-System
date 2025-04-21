@@ -37,7 +37,7 @@ const AdminUpload = ({ societyId }) => {
     formData.append("societyId", societyId);
 
     try {
-      const res = await axios.post("/api/media/upload", formData, {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/media/upload`, formData, {
         headers: {
           Authorization: `Bearer ${token}`, // Attach token
           "Content-Type": "multipart/form-data",

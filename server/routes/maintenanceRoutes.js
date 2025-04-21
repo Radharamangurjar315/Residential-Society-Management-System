@@ -4,7 +4,7 @@ const MaintenancePayment = require('../models/maintenance');
 const requiredLogin = require('../middlewares/requiredLogin');
 
 // Resident submits payment
-router.post('/submit', requiredLogin('resident'), async (req, res) => {
+router.post('/submit', requiredLogin(), async (req, res) => {
   const { amount, paymentMethod, transactionId } = req.body;
 
   const payment = new MaintenancePayment({
@@ -13,6 +13,7 @@ router.post('/submit', requiredLogin('resident'), async (req, res) => {
     amount,
     paymentMethod,
     transactionId,
+    submittedAt: new Date()
   });
 
   await payment.save();
@@ -36,7 +37,7 @@ router.put('/verify/:id', requiredLogin('admin'), async (req, res) => {
 // Admin views all payments by society
 router.get('/all/:societyId', requiredLogin('admin'), async (req, res) => {
   const payments = await MaintenancePayment.find({ societyId: req.params.societyId })
-    .populate('userId', 'name email');
+  .populate('userId', 'name flatNumber')
   res.json(payments);
 });
 

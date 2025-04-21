@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    flatNumber: {
+        type: String,
+        required: true
+    },
     societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true }, // Link to society
     registeredAt: {
         type: Date,

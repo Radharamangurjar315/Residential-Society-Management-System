@@ -1,20 +1,10 @@
-import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import CardActionArea from '@mui/material/CardActionArea';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
+import { useRef, useEffect } from "react";
 
-export default function ActionAreaCard() {
-  // Ref to track component mounting
-  const mounted = React.useRef(false);
+export default function DashboardCards() {
+  const mounted = useRef(false);
 
-  // Effect to handle resize observer cleanup
-  React.useEffect(() => {
+  useEffect(() => {
     mounted.current = true;
-    
     return () => {
       mounted.current = false;
     };
@@ -23,200 +13,139 @@ export default function ActionAreaCard() {
   const handleCardClick = (cardName) => {
     if (!mounted.current) return;
     
-    switch(cardName) {
-      case 'POLLS':
-        console.log('Polls clicked');
-        window.location.href = '/polls';
-        break;
-      case 'NOTICES':
-        console.log('Notices clicked');
-        window.location.href = '/notices';
-        break;
-      case 'EVENTS':
-        console.log('Events clicked');
-        window.location.href = '/events';
-        break;
-      case 'MAINTENANCE AND BILLS':
-        console.log('Bills clicked');
-        window.location.href = '/maintenanceform';
-        break;
-      case 'Media Upload':
-        console.log('Media upload clicked');
-        window.location.href = '/adminupload';
-        break;
-      case 'Media Gallery':
-        console.log('Gallery clicked');
-        window.location.href = '/mediagallery';
-        break;
-      case 'File a Complaint':
-        console.log('Complaints clicked');
-        window.location.href = '/filecomplaint';
-        break;
-        case 'Complaints Dashboard':
-        console.log('Complaints');
-        window.location.href = '/admincomplaints';
-        break;
-        case 'Contacts Directory':
-        window.location.href = '/contacts';
-        break;
-        case 'Visitor Form':
-        window.location.href = '/visitorform';
-        break;
-        case 'Visitor List':
-        window.location.href = '/visitorlist';
-        break;
-        case 'Visitor Card':
-        window.location.href = '/visitorcard';
-        break;
-      default:
-        break;
+    const routes = {
+      "POLLS": "/polls",
+      "NOTICES": "/notices",
+      "EVENTS": "/events",
+      "MAINTENANCE AND BILLS": "/maintenanceform",
+      "Media Upload": "/adminupload",
+      "Media Gallery": "/mediagallery",
+      "File a Complaint": "/filecomplaint",
+      "Complaints Dashboard": "/admincomplaints",
+      "Contacts Directory": "/contacts",
+      "Visitor Records": "/visitors"
+    };
+
+    if (routes[cardName]) {
+      console.log(`${cardName} clicked`);
+      window.location.href = routes[cardName];
     }
   };
 
   const cards = [
     {
-      image: "https://media.istockphoto.com/id/1531141530/vector/exit-polling-icon-vector-illustration-eps-10.jpg?s=612x612&w=0&k=20&c=pxgaIH18e1nSFvhOv9TnCuJ5ZD_vYTK7SMu30UkSswI=",
       title: "POLLS",
-      description: "Lets Vote!!"
+      description: "Lets Vote!!",
+      shortDesc: "Vote on community decisions",
+      gradientFrom: "from-blue-500",
+      gradientTo: "to-blue-600",
+      textColor: "text-blue-100",
+      icon: "fas fa-chart-bar"
     },
     {
-      image: "https://img.freepik.com/premium-vector/notice-free-vector_734448-5.jpg?semt=ais_hybrid",
       title: "NOTICES",
-      description: "Get all the updates!!"
+      description: "Get all the updates!!",
+      shortDesc: "Important announcements",
+      gradientFrom: "from-amber-500",
+      gradientTo: "to-yellow-600",
+      textColor: "text-amber-100",
+      icon: "fas fa-bullhorn"
     },
     {
-      image: "https://thumbs.dreamstime.com/b/calendar-events-isolated-special-red-round-button-abstract-illustration-calendar-events-special-red-round-button-104734032.jpg",
       title: "EVENTS",
-      description: "Stay Updated!!"
+      description: "Stay Updated!!",
+      shortDesc: "Upcoming community events",
+      gradientFrom: "from-green-500",
+      gradientTo: "to-emerald-600",
+      textColor: "text-green-100",
+      icon: "fas fa-calendar-alt"
     },
     {
-      image: "https://thumbs.dreamstime.com/b/pay-bills-20875243.jpg",
       title: "MAINTENANCE AND BILLS",
-      description: "Pay your bills online easily and securely!!"
+      description: "Pay your bills online easily and securely!!",
+      shortDesc: "Manage payments and requests",
+      gradientFrom: "from-purple-500",
+      gradientTo: "to-violet-600",
+      textColor: "text-purple-100",
+      icon: "fas fa-file-invoice-dollar"
     },
     {
-      image: "https://t4.ftcdn.net/jpg/05/65/22/41/360_F_565224180_QNRiRQkf9Fw0dKRoZGwUknmmfk51SuSS.jpg",
       title: "Media Upload",
-      description: "Upload your media easily and securely!!"
+      description: "Upload your media easily and securely!!",
+      shortDesc: "Share photos and videos",
+      gradientFrom: "from-pink-500",
+      gradientTo: "to-rose-600",
+      textColor: "text-pink-100",
+      icon: "fas fa-cloud-upload-alt"
     },
     {
-      image: "https://media.istockphoto.com/id/1493434989/photo/150-individual-personalities-collage.jpg?s=612x612&w=0&k=20&c=llR17KeI9vsu7Rb_WaItj6cidJA2QhiTN32_j-kJB6I=",
       title: "Media Gallery",
-      description: "See all the media!!"
+      description: "See all the media!!",
+      shortDesc: "Browse community media",
+      gradientFrom: "from-indigo-500",
+      gradientTo: "to-indigo-700",
+      textColor: "text-indigo-100",
+      icon: "fas fa-images"
     },
     {
-      image: "https://cms-prod.s3.ap-south-1.amazonaws.com/How_To_File_A_Complaint_Against_An_Insurance_Company_In_India_Beshak_1c7b5e94d4.png",
       title: "File a Complaint",
-      description: "File a complaint easily and securely!!"
+      description: "File a complaint easily and securely!!",
+      shortDesc: "Submit issues and concerns",
+      gradientFrom: "from-red-500",
+      gradientTo: "to-red-700",
+      textColor: "text-red-100",
+      icon: "fas fa-exclamation-circle"
     },
     {
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMTVg0dJg2ZDepbphSCup8mJQ2-p-7quxATw&s",
       title: "Complaints Dashboard",
-      description: "See all the complaints!!"
+      description: "See all the complaints!!",
+      shortDesc: "Track complaint status",
+      gradientFrom: "from-orange-500",
+      gradientTo: "to-orange-700",
+      textColor: "text-orange-100",
+      icon: "fas fa-tasks"
     },
     {
-      image: "https://media.istockphoto.com/id/956261774/vector/contact-book-icon-vector.jpg?s=612x612&w=0&k=20&c=KXO7oPuhTVPKIHCyFjC4SwzZlnjDmfn66GVoqkviDFc=",
       title: "Contacts Directory",
-      description: "Get all the contacts!!"
+      description: "Get all the contacts!!",
+      shortDesc: "Find important contacts",
+      gradientFrom: "from-teal-500",
+      gradientTo: "to-teal-700",
+      textColor: "text-teal-100",
+      icon: "fas fa-address-book"
     },
     {
-      image: "https://www.shutterstock.com/image-vector/visitor-icon-vector-isolated-on-260nw-2045904857.jpg",
-      title: "Visitor Form",
-      description: "Fill the visitor form!!"
-    },
-    {
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7sTHqLWByi3mtxed7L5hDSNMKysC56KIKVg&s",
-      title: "Visitor List",
-      description: "See all the visitors!!"
-    },
-    {
-      image: "https://t3.ftcdn.net/jpg/04/75/01/62/360_F_475016277_uAsyHtSrdSWQMgTRNEsV8PLvDKEbEFXm.jpg",
-      title: "Visitor Card",
-      description: "See all the visitor cards!!"
-    },
+      title: "Visitor Records",
+      description: "View and track all the visitors!",
+      shortDesc: "Manage visitors and guests",
+      gradientFrom: "from-cyan-500",
+      gradientTo: "to-cyan-700",
+      textColor: "text-cyan-100",
+      icon: "fas fa-user-friends"
+    }
   ];
 
   return (
-    <Box 
-    sx={{ 
-      flexGrow: 1, 
-      p: 2,
-      width: '100%',
-      maxWidth: '1200px',
-      margin: '0 auto',
-      height: 'calc(100vh - 80px)', // Adjust for taskbar height (modify 80px as needed)
-      overflowY: 'auto'  // Enable vertical scrolling if needed
-    }}
-  >
-  
-
-      <Grid 
-        container 
-        spacing={2}
-        // Add stable heights to prevent resize loops
-        sx={{
-          '& .MuiGrid-item': {
-            display: 'flex'
-          }
-        }}
-      >
+    <div className="max-w-7xl mx-auto p-4 md:p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">Community Dashboard</h1>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {cards.map((card, index) => (
-          <Grid item xs={12} sm={6} lg={3} key={index}>
-            <Card 
-              sx={{ 
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
-                // Use fixed height or min-height to prevent resize loops
-                minHeight: '400px',
-                transition: 'transform 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: 3
-                }
-              }}
-            >
-              <CardActionArea 
-                onClick={() => handleCardClick(card.title)}
-                sx={{ 
-                  flexGrow: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'stretch'
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  sx={{
-                    height: 200,  //  height
-                    objectFit: 'cover'
-                  }}
-                  image={card.image}
-                  alt={card.title}
-                />
-                <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                  <Typography 
-                    gutterBottom 
-                    variant="h5" 
-                    component="div" 
-                    align="center"
-                    sx={{ flexGrow: 1 }}
-                  >
-                    {card.title}
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    color="text.secondary" 
-                    align="center"
-                  >
-                    {card.description}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </Grid>
+          <div 
+            key={index}
+            className={`bg-gradient-to-br ${card.gradientFrom} ${card.gradientTo} text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition duration-300 hover:-translate-y-1 cursor-pointer group`}
+            onClick={() => handleCardClick(card.title)}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="text-3xl mb-4 group-hover:scale-110 transition duration-300">
+                <i className={card.icon}></i>
+              </div>
+              <h4 className="text-lg font-bold">{card.title}</h4>
+              <p className={`text-xs mt-2 ${card.textColor}`}>{card.shortDesc}</p>
+            </div>
+          </div>
         ))}
-      </Grid>
-    </Box>
+      </div>
+    </div>
   );
 }

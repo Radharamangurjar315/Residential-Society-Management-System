@@ -108,7 +108,8 @@ export default function MaintenanceDashboard({ societyId }) {
             <tbody className="bg-white divide-y divide-gray-200">
               {payments.map(p => (
                 <tr key={p._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{p.userId.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{p.userId?.name || 'Unknown User'}</td>
+                  
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{p.amount} Rs</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{p.paymentMethod}</td>
                   <td className="px-6 py-4 whitespace-nowrap">

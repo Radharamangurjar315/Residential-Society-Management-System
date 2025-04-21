@@ -10,6 +10,7 @@ const Signup = () => {
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("resident");
     const [societyName, setSocietyName] = useState("");
+    const [flatNumber, setFlatNumber] = useState("");
     const [address, setAddress] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -19,7 +20,7 @@ const Signup = () => {
     };
 
     const PostData = async () => {
-        if (!name || !email || !phone || !password || !societyName || !address) {
+        if (!name || !email || !phone || !password || !societyName || !flatNumber || !address) {
             M.toast({ html: "All fields are required!", classes: "red darken-3" });
             return;
         }
@@ -44,6 +45,7 @@ const Signup = () => {
                     password,
                     role,
                     societyName,
+                    flatNumber,
                     address,
                 }),
             });
@@ -54,6 +56,7 @@ const Signup = () => {
             if (data.error) {
                 M.toast({ html: data.error, classes: "red darken-3" });
             } else {
+                localStorage.setItem("societyName", societyName);
                 M.toast({ html: data.message, classes: "green darken-1" });
                 navigate("/signin");
             }
@@ -125,6 +128,16 @@ const Signup = () => {
                                 placeholder="Green Valley Society"
                                 value={societyName}
                                 onChange={(e) => setSocietyName(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Flat Number</label>
+                            <input
+                                type="text"
+                                placeholder="Flat Number"
+                                value={flatNumber}
+                                onChange={(e) => setFlatNumber(e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
                             />
                         </div>

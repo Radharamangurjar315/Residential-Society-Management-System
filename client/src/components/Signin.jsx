@@ -82,6 +82,7 @@ const Signin = ({ setUser }) => {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("refreshHomeOnce", "true");
         dispatch(loginSuccess({ user: data.user, token: data.token }));
         setUser(data.user);
         M.toast({ html: "Login Successful!", classes: "green darken-3" });

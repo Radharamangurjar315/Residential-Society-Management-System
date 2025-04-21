@@ -9,7 +9,9 @@ const noticeSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true }, // Ensure this field exists
+    societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
+    postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    createdAt: { type: Date, default: Date.now },
     date: {
         type: Date,
         required: true,

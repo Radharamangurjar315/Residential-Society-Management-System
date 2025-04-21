@@ -27,8 +27,6 @@ const EventCalendar = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUserRole(parsedUser.role);
-      console.log("Fetched User Role:", parsedUser.role);
     }
   }, []);
   
@@ -61,15 +59,11 @@ const EventCalendar = () => {
 
       const response = await axios.get(`http://localhost:5000/api/events?societyId=${societyId}`);
       
-      console.log("Raw Events Response:", response.data);
 
       // Ensure it's always an array and has the expected structure
       const fetchedEvents = Array.isArray(response.data) 
         ? response.data 
         : (response.data.data || []);
-
-      console.log("Processed Events:", fetchedEvents);
-
       setEvents(fetchedEvents);
       setError(null);
     } catch (err) {
@@ -155,11 +149,6 @@ const EventCalendar = () => {
   
     try {
       const eventDateTime = new Date(`${newEvent.date}T${newEvent.time}:00Z`); // Append 'Z' to force UTC
-
-      console.log("Event Date (Raw):", newEvent.date);
-      console.log("Event Time (Raw):", newEvent.time);
-      console.log("Converted DateTime:", eventDateTime.toISOString());
-
       
       const response = await axios.post(
         'http://localhost:5000/api/events/add',
@@ -220,7 +209,7 @@ const EventCalendar = () => {
             throw new Error(data.message || "Failed to delete event");
         }
 
-        console.log("✅ Event deleted:", eventId);
+       
 
         // 🔥 Immediately update UI by filtering out deleted event
         setEvents((prevEvents) => prevEvents.filter(event => event._id !== eventId));

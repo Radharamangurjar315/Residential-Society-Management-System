@@ -15,7 +15,17 @@ exports.createVisitor = async (req, res) => {
 
 exports.getVisitors = async (req, res) => {
   try {
-    const visitors = await Visitor.find({ societyId: req.params.societyId }).sort({ createdAt: -1 });
+    const { societyId } = req.params;
+
+    // Build query based on role
+    let query = { societyId };
+
+    // Restrict residents to only see visitors to their flat
+    if (req.user.role === 'resident') {
+      query.flatNumber = req.user.flatNumber;
+    }
+
+    const visitors = await Visitor.find(query).sort({ createdAt: -1 });
     res.json(visitors);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function SubmitMaintenanceForm() {
   const [amount, setAmount] = useState(0);
@@ -7,6 +8,7 @@ export default function SubmitMaintenanceForm() {
   const [txn, setTxn] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState({ type: '', message: '' });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,9 +27,17 @@ export default function SubmitMaintenanceForm() {
         }
       });
       
+      
       setStatus({ type: 'success', message: 'Payment submitted for verification' });
+      
       setAmount('');
       setTxn('');
+       // Redirect to dashboard after submission
+       const user = JSON.parse(localStorage.getItem('user'));
+        const role = user.role; 
+    if (role === 'admin') {
+      navigate('/maintenancedashboard');
+    }
     } catch (error) {
       setStatus({ 
         type: 'error', 

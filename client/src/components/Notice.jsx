@@ -13,10 +13,17 @@ import Paper from '@mui/material/Paper';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import Container from '@mui/material/Container';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
+import { alpha } from '@mui/material/styles';
+import Fade from '@mui/material/Fade';
+import Zoom from '@mui/material/Zoom';
+import Slide from '@mui/material/Slide';
+import Divider from '@mui/material/Divider';
+import Avatar from '@mui/material/Avatar';
+import { format } from 'date-fns';
 
 function NoticePage() {
   const [notices, setNotices] = useState([]);
@@ -29,6 +36,7 @@ function NoticePage() {
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMedium = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     const fetchNotices = async () => {
@@ -128,183 +136,331 @@ function NoticePage() {
     }
   };
 
+  // Format date function
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return format(date, "MMM d, yyyy 'at' h:mm a");
+    } catch (error) {
+      return dateString;
+    }
+  };
+
   return (
     <Box sx={{ 
       width: '100%', 
-      maxWidth: '100%', 
-      overflowX: 'hidden',
-      px: { xs: 1, sm: 2, md: 3 },
-      py: { xs: 2, md: 3 }
+      maxWidth: '100%',
+      backgroundColor: theme.palette.mode === 'dark' ? alpha(theme.palette.background.default, 0.9) : alpha(theme.palette.background.default, 0.9),
+      minHeight: '100vh',
+      pt: { xs: 2, sm: 3, md: 4 },
+      pb: { xs: 6, sm: 8, md: 10 },
+      px: { xs: 2, sm: 3, md: 4 }
     }}>
-      <Grid container spacing={{ xs: 2, md: 3 }} sx={{ width: '100%', margin: 0 }}>
-        {/* Notice Creation Form */}
-        <Grid item xs={12} md={4} sx={{ 
-          width: '100%', 
-          paddingLeft: '0 !important',
-          paddingRight: { xs: '0 !important', md: `${theme.spacing(3)} !important` },
-          order: { xs: 2, md: 1 }
-        }}>
-          <Card elevation={3} sx={{ height: '100%' }}>
-            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-              <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
-                Create New Notice
-              </Typography>
-              <form onSubmit={handleSubmit}>
-                <TextField
-                  fullWidth
-                  label="Notice Title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  margin="normal"
-                  variant="outlined"
-                  size={isMobile ? "small" : "medium"}
-                />
-                <TextField
-                  fullWidth
-                  label="Notice Content"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  margin="normal"
-                  variant="outlined"
-                  multiline
-                  rows={isMobile ? 3 : 4}
-                  size={isMobile ? "small" : "medium"}
-                />
-                <Button 
-                  type="submit" 
-                  variant="contained" 
-                  fullWidth 
+      <Typography 
+        variant="h4" 
+        sx={{ 
+          mb: { xs: 3, md: 4 }, 
+          fontWeight: 700,
+          textAlign: { xs: 'center', md: 'left' },
+          fontSize: { xs: '1.75rem', sm: '2.125rem', md: '2.5rem' },
+          background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: { xs: 'center', md: 'flex-start' },
+          gap: 1.5
+        }}
+      >
+        <NotificationsActiveIcon sx={{ 
+          fontSize: { xs: '1.75rem', sm: '2.125rem', md: '2.5rem' },
+          color: theme.palette.primary.main
+        }} />
+        Notice Board
+      </Typography>
+
+      <Grid container spacing={{ xs: 3, md: 4 }} sx={{ maxWidth: '1500px', mx: 'auto' }}>
+        {/* Form Section */}
+        <Grid item xs={12} md={4} sx={{ order: { xs: 2, md: 1 } }}>
+          <Slide direction="right" in={true} timeout={600}>
+            <Card elevation={3} sx={{ 
+              height: '100%', 
+              borderRadius: 2,
+              overflow: 'hidden',
+              border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+              backdropFilter: 'blur(10px)',
+              backgroundColor: alpha(theme.palette.background.paper, 0.8),
+              position: 'sticky',
+              top: { xs: 'auto', md: '1rem' }
+            }}>
+              <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+                <Typography 
+                  variant="h6" 
                   sx={{ 
-                    mt: 2,
-                    py: { xs: 1, md: 1.5 } 
+                    mb: 2.5, 
+                    fontWeight: 600,
+                    fontSize: { xs: '1.25rem', md: '1.35rem' },
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
                   }}
                 >
-                  Post Notice
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                  <Avatar sx={{ 
+                    bgcolor: theme.palette.primary.main,
+                    width: 32,
+                    height: 32
+                  }}>
+                    <NotificationsActiveIcon fontSize="small" />
+                  </Avatar>
+                  Create New Notice
+                </Typography>
+                
+                <Divider sx={{ mb: 3 }} />
 
-          {showSuccess && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              Notice posted successfully!
-            </Alert>
-          )}
+                <form onSubmit={handleSubmit}>
+                  <TextField
+                    fullWidth
+                    label="Notice Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    placeholder="Enter a descriptive title"
+                    InputProps={{
+                      sx: { borderRadius: 1.5 }
+                    }}
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Notice Content"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    multiline
+                    rows={isMobile ? 4 : 6}
+                    placeholder="Write your notice details here..."
+                    InputProps={{
+                      sx: { borderRadius: 1.5 }
+                    }}
+                    sx={{ mb: 3 }}
+                  />
+                  <Button 
+                    type="submit" 
+                    variant="contained" 
+                    fullWidth 
+                    disabled={userRole !== 'admin'}
+                    sx={{ 
+                      mt: 1, 
+                      py: 1.5,
+                      borderRadius: 1.5,
+                      fontWeight: 600,
+                      boxShadow: 2,
+                      background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                      '&:hover': {
+                        boxShadow: 4,
+                        transform: 'translateY(-2px)'
+                      },
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    Post Notice
+                  </Button>
+                  
+                  {userRole !== 'admin' && (
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, textAlign: 'center' }}>
+                      Only administrators can post notices
+                    </Typography>
+                  )}
+                </form>
+
+                <Fade in={showSuccess} timeout={700}>
+                  <Alert 
+                    severity="success" 
+                    sx={{ 
+                      mt: 2.5, 
+                      borderRadius: 1.5,
+                      display: showSuccess ? 'flex' : 'none'
+                    }}
+                  >
+                    Notice posted successfully!
+                  </Alert>
+                </Fade>
+              </CardContent>
+            </Card>
+          </Slide>
         </Grid>
 
         {/* Notices Display */}
-        <Grid item xs={12} md={8} sx={{ 
-          width: '100%', 
-          paddingLeft: '0 !important', 
-          paddingRight: '0 !important',
-          order: { xs: 1, md: 2 }
-        }}>
+        <Grid item xs={12} md={8} sx={{ order: { xs: 1, md: 2 } }}>
           <Box sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
-            gap: { xs: 1.5, md: 2 },
-            width: '100%',
-            overflowX: 'hidden'
+            gap: { xs: 2.5, md: 3 },
+            width: '100%'
           }}>
             {notices.length === 0 ? (
-              <Paper elevation={1} sx={{ p: { xs: 2, md: 3 }, textAlign: 'center' }}>
-                <Typography color="textSecondary">
-                  No notices yet. Create one to get started!
-                </Typography>
-              </Paper>
+              <Zoom in={true} timeout={500}>
+                <Paper elevation={2} sx={{ 
+                  p: { xs: 3, md: 5 }, 
+                  textAlign: 'center',
+                  borderRadius: 2,
+                  backgroundColor: alpha(theme.palette.background.paper, 0.8),
+                  backdropFilter: 'blur(10px)',
+                  border: `1px solid ${alpha(theme.palette.divider, 0.1)}`
+                }}>
+                  <NotificationsActiveIcon sx={{ fontSize: 60, color: alpha(theme.palette.text.secondary, 0.5), mb: 2 }} />
+                  <Typography color="textSecondary" variant="h6" sx={{ fontWeight: 500 }}>
+                    No notices available
+                  </Typography>
+                  <Typography color="textSecondary" variant="body2" sx={{ mt: 1 }}>
+                    {userRole === 'admin' ? 'Create the first notice using the form' : 'Check back later for updates'}
+                  </Typography>
+                </Paper>
+              </Zoom>
             ) : (
-              notices.map(notice => (
-                <Card 
-                  key={notice.id} 
-                  elevation={2}
-                  sx={{
-                    border: notice.isPinned ? '1px solid #2196f3' : 'none',
-                    transition: 'all 0.2s ease',
-                    width: '100%',
-                    '&:hover': {
-                      boxShadow: 3,
-                    }
-                  }}
-                >
-                  <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-                    <Box sx={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'flex-start',
-                      flexDirection: { xs: isMobile ? 'column' : 'row', sm: 'row' },
-                      gap: { xs: 1, sm: 0 },
-                      mb: 1.5,
-                      width: '100%'
-                    }}>
+              notices.map((notice, index) => (
+                <Fade key={notice._id || index} in={true} timeout={300 + index * 100}>
+                  <Card 
+                    elevation={notice.isPinned ? 4 : 2}
+                    sx={{
+                      borderRadius: 2,
+                      overflow: 'hidden',
+                      border: notice.isPinned ? `2px solid ${theme.palette.primary.main}` : `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                      transition: 'all 0.3s ease',
+                      backgroundColor: notice.isPinned ? alpha(theme.palette.primary.main, 0.03) : alpha(theme.palette.background.paper, 0.8),
+                      backdropFilter: 'blur(10px)',
+                      '&:hover': {
+                        transform: 'translateY(-3px)',
+                        boxShadow: theme.shadows[6],
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+                      <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'flex-start',
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        gap: { xs: 1.5, sm: 0 },
+                        mb: 2,
+                        width: '100%'
+                      }}>
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'flex-start', 
+                          gap: 1.5,
+                          flexWrap: 'wrap',
+                          maxWidth: { xs: '100%', sm: '75%' }
+                        }}>
+                          <Typography 
+                            variant="h6" 
+                            component="div"
+                            sx={{ 
+                              fontSize: { xs: '1.1rem', sm: '1.2rem', md: '1.3rem' },
+                              fontWeight: 600,
+                              wordBreak: 'break-word',
+                              overflowWrap: 'break-word',
+                              color: notice.isPinned ? theme.palette.primary.main : theme.palette.text.primary
+                            }}
+                          >
+                            {notice.title}
+                          </Typography>
+                          {notice.isPinned && (
+                            <Chip 
+                              icon={<PushPinIcon fontSize="small" />}
+                              label="Pinned" 
+                              size="small" 
+                              color="primary" 
+                              sx={{ 
+                                borderRadius: '4px',
+                                height: { xs: 24, sm: 28 },
+                                backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                                color: theme.palette.primary.main,
+                                fontWeight: 500,
+                                fontSize: '0.75rem'
+                              }}
+                            />
+                          )}
+                        </Box>
+                        <Box sx={{ 
+                          alignSelf: { xs: 'flex-end', sm: 'flex-start' },
+                          display: 'flex',
+                          ml: { xs: 0, sm: 2 }
+                        }}>
+                          <IconButton 
+                            onClick={() => togglePin(notice._id)}
+                            color={notice.isPinned ? "primary" : "default"}
+                            size={isMobile ? "small" : "medium"}
+                            sx={{ 
+                              mr: 1,
+                              backgroundColor: notice.isPinned ? alpha(theme.palette.primary.main, 0.1) : 'transparent',
+                              '&:hover': {
+                                backgroundColor: notice.isPinned ? alpha(theme.palette.primary.main, 0.2) : alpha(theme.palette.action.hover, 0.8)
+                              }
+                            }}
+                            disabled={userRole !== 'admin'}
+                          >
+                            <PushPinIcon fontSize={isMobile ? "small" : "small"} />
+                          </IconButton>
+                          <IconButton 
+                            onClick={() => handleDelete(notice._id)}
+                            color="error"
+                            size={isMobile ? "small" : "medium"}
+                            sx={{ 
+                              backgroundColor: alpha(theme.palette.error.main, 0.1),
+                              '&:hover': {
+                                backgroundColor: alpha(theme.palette.error.main, 0.2)
+                              }
+                            }}
+                            disabled={userRole !== 'admin'}
+                          >
+                            <DeleteIcon fontSize={isMobile ? "small" : "small"} />
+                          </IconButton>
+                        </Box>
+                      </Box>
+
+                      <Divider sx={{ mb: 2 }} />
+                      
+                      <Typography 
+                        variant="body1" 
+                        sx={{ 
+                          whiteSpace: 'pre-wrap',
+                          mb: 3,
+                          fontSize: { xs: '0.9rem', sm: '1rem' },
+                          wordBreak: 'break-word',
+                          overflowWrap: 'break-word',
+                          lineHeight: 1.7,
+                          color: alpha(theme.palette.text.primary, 0.9)
+                        }}
+                      >
+                        {notice.content}
+                      </Typography>
+                      
                       <Box sx={{ 
                         display: 'flex', 
                         alignItems: 'center', 
-                        gap: 1,
-                        flexWrap: 'wrap',
-                        maxWidth: { xs: '100%', sm: '80%' }
+                        color: 'text.secondary',
+                        bgcolor: alpha(theme.palette.background.default, 0.5),
+                        p: 1,
+                        borderRadius: 1
                       }}>
+                        <AccessTimeIcon sx={{ fontSize: { xs: '0.8rem', sm: 'small' }, mr: 1, color: theme.palette.text.secondary }} />
                         <Typography 
-                          variant="h6" 
-                          component="div"
+                          variant="body2" 
                           sx={{ 
-                            fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
-                            wordBreak: 'break-word',
-                            overflowWrap: 'break-word'
+                            fontSize: { xs: '0.75rem', sm: '0.8rem' },
+                            fontWeight: 500,
+                            color: alpha(theme.palette.text.secondary, 0.9)
                           }}
                         >
-                          {notice.title}
+                          {formatDate(notice.date)}
                         </Typography>
-                        {notice.isPinned && (
-                          <Chip 
-                            label="Pinned" 
-                            size="small" 
-                            color="primary" 
-                            variant="outlined"
-                            sx={{ height: { xs: 20, sm: 24 } }}
-                          />
-                        )}
                       </Box>
-                      <Box sx={{ 
-                        alignSelf: { xs: isMobile ? 'flex-end' : 'flex-start' },
-                        flexShrink: 0 
-                      }}>
-                        <IconButton 
-                          onClick={() => togglePin(notice._id)}
-                          color={notice.isPinned ? "primary" : "default"}
-                          size={isMobile ? "small" : "medium"}
-                        >
-                          <PushPinIcon fontSize={isMobile ? "small" : "medium"} />
-                        </IconButton>
-                        <IconButton 
-                          onClick={() => handleDelete(notice._id)}
-                          color="error"
-                          size={isMobile ? "small" : "medium"}
-                        >
-                          <DeleteIcon fontSize={isMobile ? "small" : "medium"} />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                    <Typography 
-                      variant="body1" 
-                      sx={{ 
-                        whiteSpace: 'pre-wrap',
-                        mb: 2,
-                        fontSize: { xs: '0.875rem', sm: '1rem' },
-                        wordBreak: 'break-word',
-                        overflowWrap: 'break-word',
-                        width: '100%'
-                      }}
-                    >
-                      {notice.content}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
-                      <AccessTimeIcon sx={{ fontSize: { xs: '0.75rem', sm: 'small' }, mr: 0.5 }} />
-                      <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        {notice.date}
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </Fade>
               ))
             )}
           </Box>
@@ -313,6 +469,5 @@ function NoticePage() {
     </Box>
   );
 }
-
 
 export default NoticePage;

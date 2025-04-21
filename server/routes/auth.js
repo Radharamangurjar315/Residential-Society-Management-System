@@ -84,7 +84,7 @@ router.get("/getUser", requiredLogin, async (req, res) => {
         const user = await User.findById(req.user._id);
         if (!user) return res.status(404).json({ error: "User not found" });
 
-        res.json({ user });
+        res.json({ user, societyName: user.societyName, flatNumber: user.flatNumber, address: user.address });
     } catch (error) {
         console.error("Get User Error:", error);
         res.status(500).json({ error: "Server error" });
@@ -94,9 +94,9 @@ router.get("/getUser", requiredLogin, async (req, res) => {
 // ✅ User Signup Route
 router.post('/api/auth/signup', async (req, res) => {
     try {
-        const { name, email, phone, password, role, societyName, address } = req.body;
+        const { name, email, phone, password, role, societyName, flatNumber, address } = req.body;
 
-        if (!name || !email || !phone || !password || !societyName || !address) {
+        if (!name || !email || !phone || !password || !societyName || !flatNumber || !address) {
             return res.status(422).json({ error: "Please fill in all required fields" });
         }
 
@@ -106,7 +106,7 @@ router.post('/api/auth/signup', async (req, res) => {
         // Find or Create Society
         let society = await Society.findOne({ societyId });
         if (!society) {
-            society = new Society({ name: societyName, address, societyId });
+            society = new Society({ name: societyName, flatNumber, address, societyId });
             await society.save();
         }
 
@@ -118,7 +118,7 @@ router.post('/api/auth/signup', async (req, res) => {
 
         // Hash password and create user
         const hashedPassword = await bcrypt.hash(password, 12);
-        const newUser = new User({ name, email, phone, password: hashedPassword, role, societyName, societyId: society._id, address });
+        const newUser = new User({ name, email, phone, password: hashedPassword, role, societyName, flatNumber, societyId: society._id, address });
         await newUser.save();
 
         res.status(201).json({ message: "User registered successfully" });
@@ -147,8 +147,8 @@ router.post('/api/auth/signin', async (req, res) => {
                 { _id: savedUser._id, societyId: savedUser.societyId },
                 JWT_SECRET
             );
-            const { _id, name, email, phone, role, societyId } = savedUser;
-            res.json({ token, user: { _id, name, email, phone, role, societyId } });
+            const { _id, name, email, phone, role, societyId, societyName, flatNumber, address } = savedUser;
+            res.json({ token, user: { _id, name, email, phone, role, societyId, societyName, flatNumber, address } });
         } else {
             return res.status(422).json({ error: "Invalid email or password" });
         }

@@ -1,5 +1,7 @@
+const mongoose = require("mongoose");
 const requiredLogin = require("../middlewares/requiredLogin");
 const Complaint = require("../models/complaint");
+
 
 // 📌 Resident files a complaint
 const fileComplaint = async (req, res) => {
@@ -43,18 +45,24 @@ const fileComplaint = async (req, res) => {
 // 📌 Get complaints (Residents see their complaints, Admins see all in their society)
 const getComplaints = async (req, res) => {
   try {
-    console.log("🔹 Authenticated User:", req.user); // Debug log
+    console.log("🔹 Authenticated User:", req.user);
     let filter = { societyId: req.user.societyId };
 
     if (req.user.role === "resident") {
       filter.residentId = req.user.id; // Residents can only see their own complaints
     }
-    const complaints = await Complaint.find(filter).populate("residentId", "name email");
+
+    // Use find() with your filter and populate correctly
+    const complaints = await Complaint.find(filter)
+      .populate("residentId", "name email")
+      .sort({ createdAt: -1 });
+    
     res.status(200).json({ success: true, complaints });
   } catch (error) {
+    console.error("❌ Server Error:", error);
     res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
-};  
+}; 
 
 // 📌 Admin updates complaint status & response
 const updateComplaint = async (req, res) => {

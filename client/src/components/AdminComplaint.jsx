@@ -13,10 +13,13 @@ const Complaints = () => {
   // 🔹 Fetch user data from localStorage
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
-  const userRole = user?.role || "resident"; // Default to resident
-  const societyId = user?.societyId || "";
+  const userRole = user?.role; 
+  const societyId = user?.societyId;
+  
+
 
   useEffect(() => {
+    
     if (token && societyId) {
       fetchComplaints();
     } else {
@@ -35,10 +38,10 @@ const Complaints = () => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/complaints/${societyId}`, {
         method: "GET",
         headers: {
+          Authorization: `Bearer ${token}`, // Use token for authentication
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, // Use token for authentication
         },
-        credentials: "include",
+        
       });
 
       const data = await response.json();

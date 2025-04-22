@@ -9,6 +9,7 @@ app.use(express.json()); // to parse the incoming request with json payload
 
 
 const mongoose = require('mongoose');
+mongoose.set('strictPopulate', false);
 
 const compression = require("compression");
 const morgan = require("morgan");
@@ -36,9 +37,13 @@ const allowedOrigins = [
   ];
 
   app.use(cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }));
 

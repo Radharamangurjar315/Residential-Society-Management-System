@@ -148,7 +148,7 @@ const EventCalendar = () => {
     }
   
     try {
-      const eventDateTime = new Date(`${newEvent.date}T${newEvent.time}:00Z`); // Append 'Z' to force UTC
+      const eventDateTime = new Date(`${newEvent.date}T${newEvent.time}:00`);
       
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/events/add`,

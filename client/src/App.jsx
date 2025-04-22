@@ -21,19 +21,19 @@ import MaintenanceDashboard from "./components/payments/MaintenanceDashboard";
 
 function App() {
     const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")) || null);
-    useEffect(() => {
-        fetch("https://residential-society-management-system.onrender.com/api/test", {
-          method: "GET",
-          credentials: "include", // since you're using credentials: true
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log("✅ CORS Test Response:", data);
-          })
-          .catch((err) => {
-            console.error("❌ CORS Error:", err);
-          });
-      }, []);
+    // useEffect(() => {
+    //     fetch("https://residential-society-management-system.onrender.com/api/test", {
+    //       method: "GET",
+    //       credentials: "include", // since you're using credentials: true
+    //     })
+    //       .then((res) => res.json())
+    //       .then((data) => {
+    //         console.log("✅ CORS Test Response:", data);
+    //       })
+    //       .catch((err) => {
+    //         console.error("❌ CORS Error:", err);
+    //       });
+    //   }, []);
       
 
     useEffect(() => {

@@ -49,7 +49,6 @@ const getComplaints = async (req, res) => {
     if (req.user.role === "resident") {
       filter.residentId = req.user.id; // Residents can only see their own complaints
     }
-
     const complaints = await Complaint.find(filter).populate("residentId", "name email");
     res.status(200).json({ success: true, complaints });
   } catch (error) {

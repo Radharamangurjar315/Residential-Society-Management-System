@@ -35,9 +35,10 @@ const Complaints = () => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/complaints/${societyId}`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // Use token for authentication
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, // Use token for authentication
         },
+        credentials: "include",
       });
 
       const data = await response.json();

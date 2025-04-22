@@ -30,12 +30,13 @@ const port = 5000;
 
 const allowedOrigins = [
     "http://localhost:5173",  // for local development
+    "https://societyy-rsms-rg.vercel.app",
     "https://residential-society-management-systemfrontend-4hkhc63lz.vercel.app",
     "https://residential-society-managem-git-f5dea8-ramans-projects-f78a9e3f.vercel.app"
   ];
 
   app.use(cors({
-    origin: "*",  // Allow ALL origins temporarily for testing
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,

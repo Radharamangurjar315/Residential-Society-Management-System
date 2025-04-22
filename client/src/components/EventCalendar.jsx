@@ -131,12 +131,12 @@ const EventCalendar = () => {
   // Add new event
   const handleAddEvent = async (e) => {
     e.preventDefault();
-    
+  
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
     const parsedUser = JSON.parse(storedUser);
     const societyId = parsedUser?.societyId;
-    
+  
     if (!societyId) {
       alert("Society ID missing - please log in again");
       return;
@@ -149,7 +149,7 @@ const EventCalendar = () => {
   
     try {
       const eventDateTime = new Date(`${newEvent.date}T${newEvent.time}:00`);
-      
+  
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/events/add`,
         {
@@ -157,13 +157,13 @@ const EventCalendar = () => {
           description: newEvent.description,
           date: eventDateTime.toISOString(),
           societyId,
-          location: newEvent.location
+          location: newEvent.location,
         },
         {
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         }
       );
   
@@ -396,111 +396,91 @@ const EventCalendar = () => {
 
       {/* Event Modal */}
       {showEventModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 sm:p-4 z-50">
-          <div className="w-full h-full sm:h-auto sm:max-w-md rounded-none sm:rounded-lg p-4 bg-white dark:bg-gray-800 overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                {selectedDate ? `Events for ${selectedDate.toLocaleDateString()}` : 'Add New Event'}
-              </h3>
-              <button 
-                className="text-2xl hover:text-gray-600"
-                onClick={() => setShowEventModal(false)}
-                aria-label="Close modal"
-              >
-                ×
-              </button>
-            </div>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 sm:p-4 z-50">
+    <div className="w-full h-full sm:h-auto sm:max-w-md rounded-none sm:rounded-lg p-4 bg-white dark:bg-gray-800 overflow-y-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <Calendar className="w-5 h-5" />
+          {selectedDate ? `Events for ${selectedDate.toLocaleDateString()}` : 'Add New Event'}
+        </h3>
+        <button
+          className="text-2xl hover:text-gray-600"
+          onClick={() => setShowEventModal(false)}
+          aria-label="Close modal"
+        >
+          ×
+        </button>
+      </div>
 
-            {selectedDate && getEventsForDate(selectedDate).length > 0 && (
-              <div className="mb-4 space-y-2">
-                <h4 className="font-medium">Existing Events:</h4>
-                {getEventsForDate(selectedDate).map(event => (
-                  <div key={event._id} className="p-3 border rounded-lg hover:bg-gray-50 group">
-                    <div className="flex justify-between items-start">
-                      <div className="font-semibold">{event.title}</div>
-                      <button
-                        onClick={() => handleDeleteEvent(event._id)}
-                        className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                        aria-label="Delete event"
-                      >
-                        <Trash size={16} />
-                      </button>
-                    </div>
-                    <div className="text-sm">{event.description}</div>
-                    <div className="flex items-center gap-1 text-sm text-gray-600">
-                      <Clock size={14} />
-                      {new Date(event.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            <form onSubmit={handleAddEvent} className="mt-4 space-y-3">
-              <input
-                type="text"
-                placeholder="Event Title"
-                className="w-full p-2 border rounded"
-                value={newEvent.title}
-                onChange={(e) => setNewEvent({
-                  ...newEvent,
-                  title: e.target.value,
-                })}
-                required
-              />
-              <textarea
-                placeholder="Description"
-                className="w-full p-2 border rounded"
-                value={newEvent.description}
-                onChange={(e) => setNewEvent({
-                  ...newEvent,
-                  description: e.target.value
-                })}
-              />
-              <input
-                type="text"
-                placeholder="Event Location"
-                className="w-full p-2 border rounded"
-                value={newEvent.location}
-                onChange={(e) => setNewEvent({
-                  ...newEvent,
-                  location: e.target.value,
-                })}
-                required
-              />
-              <div className="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="date"
-                  className="w-full sm:flex-1 p-2 border rounded"
-                  value={newEvent.date}
-                  onChange={(e) => setNewEvent({
-                    ...newEvent,
-                    date: e.target.value
-                  })}
-                  required
-                />
-                <input
-                  type="time"
-                  className="w-full sm:flex-1 p-2 border rounded"
-                  value={newEvent.time}
-                  onChange={(e) => setNewEvent({
-                    ...newEvent,
-                    time: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <button 
-                type="submit" 
-                className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-              >
-                Add Event
-              </button>
-            </form>
-          </div>
+      {selectedDate && getEventsForDate(selectedDate).length > 0 && (
+        <div className="mb-4 space-y-2">
+          <h4 className="font-medium">Event Details</h4>
+          {getEventsForDate(selectedDate).map((event) => (
+            <div key={event._id}>
+              <p><strong>Title:</strong> {event.title}</p>
+              <p><strong>Description:</strong> {event.description}</p>
+              <p><strong>Time:</strong> {new Date(event.date).toLocaleTimeString()}</p>
+              <p><strong>Location:</strong> {event.location}</p>
+            </div>
+          ))}
         </div>
       )}
+
+      {/* Add Event Form */}
+      {!selectedDate && (
+        <form onSubmit={handleAddEvent}>
+          <div className="space-y-2">
+            <input
+              type="text"
+              name="title"
+              value={newEvent.title}
+              onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+              placeholder="Event Title"
+              className="w-full p-2 border rounded"
+              required
+            />
+            <textarea
+              name="description"
+              value={newEvent.description}
+              onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+              placeholder="Event Description"
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="date"
+              name="date"
+              value={newEvent.date}
+              onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <input
+              type="time"
+              name="time"
+              value={newEvent.time}
+              onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <input
+              type="text"
+              name="location"
+              value={newEvent.location}
+              onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
+              placeholder="Event Location"
+              className="w-full p-2 border rounded"
+              required
+            />
+            <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
+              Add Event
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

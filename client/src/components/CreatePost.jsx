@@ -25,7 +25,6 @@ const CreatePost = () => {
             })
             .then(res => res.json())
             .then(data => {
-                console.log(data)
                 if (data.error) {
                     M.toast({html: data.error});
                 } else {
@@ -53,7 +52,6 @@ const CreatePost = () => {
         .then(res => res.json())
         .then(data => {
             // Handle Cloudinary response here
-            console.log(data);
             // Assuming 'setUrl' is a state setter function to store the URL returned by Cloudinary
             setUrl(data.url); // Make sure 'setUrl' is defined and correctly handles the state update
         })

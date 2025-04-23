@@ -23,7 +23,6 @@ export default function MaintenanceDashboard({ societyId }) {
       setError(null);
     } catch (err) {
       setError('Failed to fetch payment data');
-      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +47,6 @@ export default function MaintenanceDashboard({ societyId }) {
       await fetchPayments();
     } catch (err) {
       setError(`Failed to ${status.toLowerCase()} payment`);
-      console.error(err);
       setIsLoading(false);
     }
   };

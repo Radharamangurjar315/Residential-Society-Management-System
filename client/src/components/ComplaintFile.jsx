@@ -35,7 +35,6 @@ const ComplaintFile = () => {
     setSuccess(false);
 
     try {
-      console.log("Submitting:", formData);
       const start = performance.now();
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/complaints/file`, {
         method: "POST",
@@ -46,14 +45,12 @@ const ComplaintFile = () => {
         body: JSON.stringify(formData),
       });
       const end = performance.now();
-console.log(`⏱️ Complaint request took ${Math.round(end - start)}ms`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("Success:", data);
       setFormData({ title: "", description: "" }); // Reset form
       setSuccess(true);
       setTimeout(() => {
@@ -61,7 +58,6 @@ console.log(`⏱️ Complaint request took ${Math.round(end - start)}ms`);
       }, 1000); // Give a small delay to show success message
       
     } catch (error) {
-      console.error("❌ Error filing complaint:", error);
     
       setError(error?.message || "Something went wrong while filing the complaint.");
     }

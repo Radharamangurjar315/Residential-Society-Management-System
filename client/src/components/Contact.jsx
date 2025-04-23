@@ -23,7 +23,6 @@ const ContactsList = () => {
       });
       setContacts(res.data);
     } catch (err) {
-      console.error("Failed to fetch contacts:", err);
     } finally {
       setLoading(false);
     }
@@ -49,7 +48,6 @@ const ContactsList = () => {
       setShowForm(false);
       fetchContacts(); // Refresh list after adding
     } catch (err) {
-      console.error("Failed to add contact:", err);
       setMessage("Error adding contact");
     }
   };

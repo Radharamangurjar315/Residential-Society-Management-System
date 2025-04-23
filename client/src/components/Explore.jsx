@@ -17,7 +17,8 @@ export default function DashboardCards() {
       "POLLS": "/polls",
       "NOTICES": "/notices",
       "EVENTS": "/events",
-      "MAINTENANCE AND BILLS": "/maintenanceform",
+      "Maintenance and Bills": "/maintenanceform",
+      "Maintenance Dashboard": "/maintenancedashboard",
       "Media Upload": "/adminupload",
       "Media Gallery": "/mediagallery",
       "File a Complaint": "/filecomplaint",
@@ -27,7 +28,6 @@ export default function DashboardCards() {
     };
 
     if (routes[cardName]) {
-      console.log(`${cardName} clicked`);
       window.location.href = routes[cardName];
     }
   };
@@ -61,12 +61,21 @@ export default function DashboardCards() {
       icon: "fas fa-calendar-alt"
     },
     {
-      title: "MAINTENANCE AND BILLS",
-      description: "Pay your bills online easily and securely!!",
-      shortDesc: "Manage payments and requests",
+      title: "Maintenance and Bills",
+      description: "Register Your Bills!!",
+      shortDesc: "Record your maintenance and bill payments",
       gradientFrom: "from-purple-500",
       gradientTo: "to-violet-600",
       textColor: "text-purple-100",
+      icon: "fas fa-file-invoice-dollar"
+    },
+    {
+      title: "Maintenance Dashboard",
+      description: "Register Your Bills!!",
+      shortDesc: "Track and verify your status of payments",
+      gradientFrom: "from-green-500",
+      gradientTo: "to-green-600",
+      textColor: "text-grey-100",
       icon: "fas fa-file-invoice-dollar"
     },
     {

@@ -11,7 +11,6 @@ const getNotices = async (req, res) => {
         return res.status(400).json({ error: "Invalid society ID format" });
       }
   
-      console.log(`Fetching notices for Society ID: ${societyId}`);
   
       // Fetch notices sorted by latest date
       const notices = await Notice.find({ societyId }).sort({ date: -1 });
@@ -48,7 +47,6 @@ const addNotice = async (req, res) => {
         });
 
         const savedNotice = await newNotice.save();
-        console.log("✅ Notice added successfully:", savedNotice);
 
         res.status(201).json(savedNotice);
     } catch (error) {

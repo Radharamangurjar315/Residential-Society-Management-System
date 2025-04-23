@@ -64,8 +64,6 @@ router.get('/', async (req, res) => {
   try {
     const { societyId } = req.query;
 
-    // console.log("Received request for events:", req.query);
-
     // Check if societyId is provided
    // In your GET / route:
 if (!societyId) {
@@ -80,7 +78,7 @@ if (!societyId) {
       return res.status(400).json({ error: "Invalid society ID format" });
     }
 
-    // console.log(`Fetching events for Society ID: ${societyId}`);
+
 
     // Fetch events from the database
     const events = await Event.find({ societyId: new mongoose.Types.ObjectId(societyId) }).sort({ date: -1 });

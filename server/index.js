@@ -84,7 +84,6 @@ app.use('/api/visitors', visitorRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 
 app.use((req, res, next) => {
-    console.log(`🔹 Incoming ${req.method} request to ${req.url}`);
     next();
   });
 app.use('/api/complaints', complaintRoutes); // Use the complaint routes

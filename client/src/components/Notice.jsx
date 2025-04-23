@@ -39,7 +39,6 @@ function NoticePage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isMedium = useMediaQuery(theme.breakpoints.down('md'));
-  console.log("Base API URL:", import.meta.env.VITE_API_URL);
 
   useEffect(() => {
     const fetchNotices = async () => {
@@ -64,7 +63,6 @@ function NoticePage() {
     
         setNotices(response.data);
       } catch (error) {
-        console.error("Error fetching notices:", error);
         setNotices([]);
       }
     };
@@ -88,8 +86,7 @@ function NoticePage() {
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 2000);
     } catch (error) {
-      console.error("Error adding notice:", error);
-    }
+      console.error("Error posting notice:", error);}
   };
 
   const togglePin = (id) => {
@@ -100,7 +97,6 @@ function NoticePage() {
 
   const handleDelete = async (id) => {
     if (!id) {
-      console.error("Notice ID is undefined");
       return;
     }
   
@@ -133,7 +129,6 @@ function NoticePage() {
         alert(`Failed to delete: ${data.message}`);
       }
     } catch (error) {
-      console.error("Delete Error:", error);
       alert("Something went wrong!");
     } finally {
       setLoading(false);

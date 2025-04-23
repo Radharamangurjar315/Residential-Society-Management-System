@@ -61,7 +61,6 @@ const Visitors = () => {
       });
       setVisitors(res.data);
     } catch (err) {
-      console.error("Fetch Error:", err.response?.data || err.message);
       showError("Failed to load visitors. Please try again.");
     } finally {
       setLoading(false);
@@ -80,7 +79,6 @@ const Visitors = () => {
       showSuccess("Visitor successfully registered!");
       fetchVisitors();
     } catch (err) {
-      console.error("Create Error:", err.response?.data || err.message);
       showError("Failed to register visitor. Please try again.");
     }
   };
@@ -95,7 +93,6 @@ const Visitors = () => {
       showSuccess(`Visitor ${status === 'approved' ? 'approved' : 'rejected'} successfully`);
       fetchVisitors();
     } catch (err) {
-      console.error("Status Update Error:", err.response?.data || err.message);
       showError("Failed to update visitor status");
     }
   };
@@ -110,7 +107,6 @@ const Visitors = () => {
       showSuccess("Visitor exit recorded successfully");
       fetchVisitors();
     } catch (err) {
-      console.error("Exit Error:", err.response?.data || err.message);
       showError("Failed to record visitor exit");
     }
   };

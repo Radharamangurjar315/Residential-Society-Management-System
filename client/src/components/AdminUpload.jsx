@@ -12,9 +12,8 @@ const AdminUpload = ({ societyId }) => {
     const userToken = localStorage.getItem("token");
     if (userToken) {
       setToken(userToken);
-      console.log("Token found:", userToken);
     } else {
-      console.error("No authentication token found!");
+      alert("No token found. Please log in again.");
     }
   }, []);
 
@@ -48,10 +47,8 @@ const AdminUpload = ({ societyId }) => {
       setSelectedFile(null);
       setFileName("");
       alert("File uploaded successfully!");
-      console.log("Uploaded file:", res.data);
     } catch (err) {
       setIsUploading(false);
-      console.error("Upload failed:", err);
       alert("Upload failed! Please try again.");
     }
   };

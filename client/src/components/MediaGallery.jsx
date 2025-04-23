@@ -76,7 +76,6 @@ const MediaGallery = ({ user }) => {
 
   useEffect(() => {
     if (!societyId) {
-      console.error("societyId is missing!");
       return;
     }
 
@@ -93,12 +92,10 @@ const MediaGallery = ({ user }) => {
           }
         );
 
-        console.log("Fetched media files:", response.data);
         setMediaFiles(response.data.media);
         setError(null);
       } catch (err) {
         if (!axios.isCancel(err)) {
-          console.error("Error fetching media:", err);
           setError("Failed to load media. Please try again.");
         }
       } finally {
@@ -127,7 +124,6 @@ const MediaGallery = ({ user }) => {
 
       setMediaFiles(prevFiles => prevFiles.filter(file => file._id !== id));
     } catch (err) {
-      console.error("Error deleting media:", err);
       alert("Failed to delete media.");
     }
   };

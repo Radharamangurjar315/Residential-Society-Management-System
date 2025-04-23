@@ -84,7 +84,6 @@ const Complaints = () => {
         );
       }
     } catch (err) {
-      console.error("Error updating complaint:", err);
     }
   };
 

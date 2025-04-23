@@ -61,7 +61,6 @@ const Signup = () => {
                 navigate("/signin");
             }
         } catch (error) {
-            console.error("Error:", error.message);
             setLoading(false);
             M.toast({ html: "An error occurred. Please try again.", classes: "red darken-3" });
         }

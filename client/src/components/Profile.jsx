@@ -42,7 +42,6 @@ const Profile = () => {
 
         setUser(storedUser);
       } catch (error) {
-        console.error("Error fetching user:", error);
         setError(error.message);
       } finally {
         setIsLoading(false);

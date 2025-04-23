@@ -8,9 +8,6 @@ const fileComplaint = async (req, res) => {
   try {
     const start = performance.now();
 
-    console.log("🔹 Incoming Complaint Data:", req.body);
-    console.log("🔹 Authenticated User:", req.user);
-
     const { title, description, attachments } = req.body;
 
     if (!title || !description) {
@@ -31,12 +28,8 @@ const fileComplaint = async (req, res) => {
 
     const end = performance.now();
 
-    console.log(`✅ Complaint saved! Save time: ${Math.round(saveEnd - saveStart)}ms, Total time: ${Math.round(end - start)}ms`);
-
     res.status(201).json({ success: true, message: "Complaint filed successfully!", complaint });
-    console.log("📤 Response sent to client.");
   } catch (error) {
-    console.error("❌ Server Error:", error);
     res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
@@ -45,7 +38,6 @@ const fileComplaint = async (req, res) => {
 // 📌 Get complaints (Residents see their complaints, Admins see all in their society)
 const getComplaints = async (req, res) => {
   try {
-    console.log("🔹 Authenticated User:", req.user);
     let filter = { societyId: req.user.societyId };
 
     if (req.user.role === "resident") {

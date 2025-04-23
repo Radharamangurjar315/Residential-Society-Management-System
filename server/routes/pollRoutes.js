@@ -35,7 +35,6 @@ router.get('/', async (req, res) => {
           if (!societyId || !mongoose.Types.ObjectId.isValid(societyId)) {
             return res.status(400).json({ error: "Invalid society ID format" });
           }
-          console.log(`Fetching polls for Society ID: ${societyId}`);
     const polls = await Poll.find({societyId}).sort({ createdAt: -1 });
     if (polls.length === 0) {
       return res.status(404).json({ message: "No notices found for this society" });
@@ -47,18 +46,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// // Get a Single Poll
-// router.get('/:id', async (req, res) => {
-//   try {
-//     const poll = await Poll.findById(req.params.id);
-//     if (!poll) {
-//       return res.status(404).json({ message: "Poll not found" });
-//     }
-//     res.status(200).json(poll);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
 
 // Delete Poll (Admin Only)
 router.delete('/:id', async (req, res) => {
@@ -82,7 +69,6 @@ router.delete('/:id', async (req, res) => {
 
 // Vote on a Poll
 router.post('/:id/vote', async (req, res) => {
-  console.log("Incoming vote request:", req.body);  // Log request data
   try {
     const { userId, optionIndex, societyId } = req.body;
     if (!userId || !societyId) {

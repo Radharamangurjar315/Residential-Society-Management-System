@@ -7,14 +7,11 @@ const verifyAdmin = async (req, res, next) => {
       const token = req.headers.authorization?.split(" ")[1];
   
       if (!token) {
-        console.log("No token provided");
         return res.status(401).json({ message: "Unauthorized: No token provided" });
       }
   
-    //   console.log("Received Token:", token);         receive token in console
   
       const decoded = jwt.verify(token, JWT_SECRET);
-    //   console.log("Decoded JWT:", decoded);
   
       const user = await User.findById(decoded._id);
       if (!user) {
@@ -22,7 +19,6 @@ const verifyAdmin = async (req, res, next) => {
         return res.status(401).json({ message: "Unauthorized: User not found" });
       }
   
-    //   console.log("User exists:", user);                returns user details in console
       if (user.role !== "admin") {
         return res.status(403).json({ message: "Access denied. Admins only!" });
       }

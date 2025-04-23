@@ -68,20 +68,17 @@ const PollSystem = ({ user }) => {
         setPolls((prevPolls) => prevPolls.filter(poll => poll._id !== pollId));
       }
     } catch (error) {
-      console.error("Error deleting poll:", error);
       setError("Failed to delete poll");
     }
   };
   
   const votePoll = async (pollId, optionIndex) => {
     if (!user || !user._id || !user.societyId) {  
-      console.error("User ID is missing:", user);
       setError("User is not authenticated.");
       return;
     }
   
     try {
-      console.log("Voting with:", { userId: user._id, userName: user.name, optionIndex });
   
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/polls/${pollId}/vote`, {
         method: 'POST',
@@ -93,11 +90,9 @@ const PollSystem = ({ user }) => {
         fetchPolls();  // Refresh poll data
       } else {
         const errorMessage = await response.json();
-        console.error("Vote error:", errorMessage);
         setError(errorMessage.message);
       }
     } catch (error) {
-      console.error("Network error:", error);
       setError("Failed to cast vote");
     }
   };

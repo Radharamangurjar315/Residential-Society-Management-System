@@ -181,6 +181,7 @@ function NoticePage() {
       <Grid container spacing={{ xs: 3, md: 4 }} sx={{ maxWidth: '1500px', mx: 'auto' }}>
         {/* Form Section */}
         <Grid item xs={12} md={4} sx={{ order: { xs: 2, md: 1 } }}>
+        {userRole === 'admin' && (
           <Slide direction="right" in={true} timeout={600}>
             <Card elevation={3} sx={{ 
               height: '100%', 
@@ -215,8 +216,8 @@ function NoticePage() {
                 </Typography>
                 
                 <Divider sx={{ mb: 3 }} />
-
-                <form onSubmit={handleSubmit}>
+                
+                <form  onSubmit={handleSubmit}>
                   <TextField
                     fullWidth
                     label="Notice Title"
@@ -273,7 +274,7 @@ function NoticePage() {
                     </Typography>
                   )}
                 </form>
-
+                
                 <Fade in={showSuccess} timeout={700}>
                   <Alert 
                     severity="success" 
@@ -289,6 +290,7 @@ function NoticePage() {
               </CardContent>
             </Card>
           </Slide>
+        )}
         </Grid>
 
         {/* Notices Display */}

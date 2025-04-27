@@ -66,6 +66,7 @@ const CreatePost = () => {
 
     return (
         <>
+        
             <div
                 className="card input-filled"
                 style={{

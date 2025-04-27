@@ -148,7 +148,7 @@ const NavBar = () => {
         <ListItemIcon><AccountCircle color="primary" /></ListItemIcon>
         <ListItemText primary="Profile" />
       </MenuItem>
-      <Divider />
+      
     </Menu>
   );
 

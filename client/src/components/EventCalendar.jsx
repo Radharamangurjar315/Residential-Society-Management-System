@@ -208,7 +208,7 @@ const EventCalendar = () => {
 
 
 
-        // 🔥 Immediately update UI by filtering out deleted event
+        //  Immediately update UI by filtering out deleted event
         setEvents((prevEvents) => prevEvents.filter(event => event._id !== eventId));
         setShowEventModal(false); 
 
@@ -274,24 +274,20 @@ const EventCalendar = () => {
               →
             </button>
           </div>
-          <button 
-            className="p-2 rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors"
-            onClick={() => setIsDark(!isDark)}
-            aria-label="Toggle theme"
-          >
-            {isDark ? 'Light' : 'Dark'}
-          </button>
         </div>
 
         {/* Controls */}
         <div className="flex flex-col sm:flex-row gap-2 justify-between items-center">
+        {!userRole === 'admin' && (
           <button
             onClick={openAddEventModal}
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded transition-colors"
           >
+            
             <PlusCircle size={18} />
             Add Event
           </button>
+        )}
           <select
             className="w-full sm:w-auto p-2 rounded border"
             onChange={(e) => setCurrentDate(new Date(currentDate.getFullYear(), parseInt(e.target.value)))}
@@ -395,6 +391,7 @@ const EventCalendar = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 sm:p-6 z-50">
         <div className="w-full max-h-[90vh] sm:max-w-md bg-white dark:bg-gray-800 rounded-lg p-4 mt-10 overflow-y-auto">
 <div className="flex justify-between items-center mb-4">
+              
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
                 {selectedDate ? `Events for ${selectedDate.toLocaleDateString()}` : 'Add New Event'}
@@ -415,6 +412,7 @@ const EventCalendar = () => {
       <div key={event._id} className="p-3 border rounded-lg hover:bg-gray-50 group">
         <div className="flex justify-between items-start">
           <div className="font-semibold"><strong>Title:</strong>{event.title}</div>
+          {!userRole === 'admin' && (
           <button
             onClick={() => handleDeleteEvent(event._id)}
             className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -422,18 +420,15 @@ const EventCalendar = () => {
           >   
             <Trash size={16} />
           </button>
+          )}
         </div>
         <div className="text-sm"><strong>Description and Time:</strong>{event.description}</div>
         <p><strong>Location:</strong> {event.location}</p>
-        {/* <div className="flex items-center gap-1 text-sm text-gray-600">
-          <Clock size={14} />
-          <p><strong>Time:</strong> {new Date(event.date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: true})}</p> 
-          </div> */}
       </div>
     ))}
   </div>
 )}
-
+{!userRole === 'admin' && (
 <form onSubmit={handleAddEvent} className="mt-4 space-y-3">
   <input
     type="text"
@@ -478,16 +473,6 @@ const EventCalendar = () => {
       })}
       required
     />
-    {/* <input
-      type="time"
-      className="w-full sm:flex-1 p-2 border rounded"
-      value={newEvent.time}
-      onChange={(e) => setNewEvent({
-        ...newEvent,
-        time: e.target.value
-      })}
-      required
-    /> */}
   </div>
   <button 
     type="submit" 
@@ -496,6 +481,7 @@ const EventCalendar = () => {
     Add Event
   </button>
 </form>
+)}
 </div>
 </div>
 )}

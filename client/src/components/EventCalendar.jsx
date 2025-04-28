@@ -278,7 +278,7 @@ const EventCalendar = () => {
 
         {/* Controls */}
         <div className="flex flex-col sm:flex-row gap-2 justify-between items-center">
-        {!userRole === 'admin' && (
+       
           <button
             onClick={openAddEventModal}
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded transition-colors"
@@ -287,7 +287,6 @@ const EventCalendar = () => {
             <PlusCircle size={18} />
             Add Event
           </button>
-        )}
           <select
             className="w-full sm:w-auto p-2 rounded border"
             onChange={(e) => setCurrentDate(new Date(currentDate.getFullYear(), parseInt(e.target.value)))}
@@ -428,7 +427,7 @@ const EventCalendar = () => {
     ))}
   </div>
 )}
-{!userRole === 'admin' && (
+
 <form onSubmit={handleAddEvent} className="mt-4 space-y-3">
   <input
     type="text"
@@ -481,7 +480,7 @@ const EventCalendar = () => {
     Add Event
   </button>
 </form>
-)}
+
 </div>
 </div>
 )}

@@ -10,8 +10,8 @@ const EventCalendar = () => {
   const [newEvent, setNewEvent] = useState({
     title: '',
     description: '',
-    time: '', 
     date: '',
+    time: '', // Added explicit time field
     location: '',
     societyId: ''
   });
@@ -27,6 +27,7 @@ const EventCalendar = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
+      setUserRole(parsedUser?.role);
     }
   }, []);
 
@@ -58,7 +59,6 @@ const EventCalendar = () => {
 
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/events?societyId=${societyId}`);
 
-
       // Ensure it's always an array and has the expected structure
       const fetchedEvents = Array.isArray(response.data) 
         ? response.data 
@@ -82,6 +82,13 @@ const EventCalendar = () => {
   useEffect(() => {
     localStorage.setItem('calendarEvents', JSON.stringify(events));
   }, [events]);
+
+  // Format time from date string
+  const formatEventTime = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
   // Get days in current month
   const getDaysInMonth = useCallback((date) => {
@@ -140,12 +147,13 @@ const EventCalendar = () => {
       return;
     }
 
-    if (!newEvent.title || !newEvent.date || !newEvent.time || !newEvent.location) {
+    if (!newEvent.title || !newEvent.date || !newEvent.location || !newEvent.time) {
       alert("Please fill all required fields");
       return;
     }
 
     try {
+      // Create date with time
       const eventDateTime = new Date(`${newEvent.date}T${newEvent.time}:00`);
       
       const response = await axios.post(
@@ -172,9 +180,9 @@ const EventCalendar = () => {
       setNewEvent({
         title: '',
         description: '',
-        time: '',
         location: '',
-        date: ''
+        date: '',
+        time: ''
       });
 
       setShowEventModal(false);
@@ -182,7 +190,6 @@ const EventCalendar = () => {
     } catch (error) {
       alert(`Failed: ${error.response?.data?.message || error.message}`);
     }
-    setShowEventModal(false);
   };
 
   // Delete an event
@@ -206,8 +213,6 @@ const EventCalendar = () => {
             throw new Error(data.message || "Failed to delete event");
         }
 
-
-
         //  Immediately update UI by filtering out deleted event
         setEvents((prevEvents) => prevEvents.filter(event => event._id !== eventId));
         setShowEventModal(false); 
@@ -215,9 +220,9 @@ const EventCalendar = () => {
     } catch (error) {
         setShowEventModal(false);
         alert("Only admin can delete events!!.");
-
     }
-};
+  };
+
   // Handle date click to open event modal
   const handleDateClick = (date) => {
     if (date) {
@@ -225,7 +230,8 @@ const EventCalendar = () => {
       setShowEventModal(true);
       setNewEvent(prev => ({
         ...prev,
-        date: date.toLocaleDateString('en-CA') // Ensure local format YYYY-MM-DD
+        date: date.toLocaleDateString('en-CA'), // Ensure local format YYYY-MM-DD
+        time: '12:00' // Default time
       }));
     }
   };
@@ -239,7 +245,7 @@ const EventCalendar = () => {
     setNewEvent({
       title: '',
       description: '',
-      time: '',
+      time: '12:00', // Default time
       location: '',
       date: localDate
     });
@@ -278,12 +284,10 @@ const EventCalendar = () => {
 
         {/* Controls */}
         <div className="flex flex-col sm:flex-row gap-2 justify-between items-center">
-       
           <button
             onClick={openAddEventModal}
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded transition-colors"
           >
-            
             <PlusCircle size={18} />
             Add Event
           </button>
@@ -388,9 +392,8 @@ const EventCalendar = () => {
       {/* Event Modal */}
       {showEventModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 sm:p-6 z-50">
-        <div className="w-full max-h-[90vh] sm:max-w-md bg-white dark:bg-gray-800 rounded-lg p-4 mt-10 overflow-y-auto">
-<div className="flex justify-between items-center mb-4">
-              
+          <div className="w-full max-h-[90vh] sm:max-w-md bg-white dark:bg-gray-800 rounded-lg p-4 mt-10 overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
                 {selectedDate ? `Events for ${selectedDate.toLocaleDateString()}` : 'Add New Event'}
@@ -402,91 +405,106 @@ const EventCalendar = () => {
               >
                 ×
               </button>
+            </div>
+
+            {selectedDate && getEventsForDate(selectedDate).length > 0 && (
+              <div className="mb-4 space-y-2">
+                <h4 className="font-medium">Existing Events:</h4>
+                {getEventsForDate(selectedDate).map(event => (
+                  <div key={event._id} className="p-3 border rounded-lg hover:bg-gray-50 group">
+                    <div className="flex justify-between items-start">
+                      <div className="font-semibold"><strong>Title: </strong>{event.title}</div>
+                      {userRole === 'admin' && (
+                        <button
+                          onClick={() => handleDeleteEvent(event._id)}
+                          className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                          aria-label="Delete event"
+                        >   
+                          <Trash size={16} />
+                        </button>
+                      )}
+                    </div>
+                    <div className="text-sm">
+                      <strong>Description: </strong>{event.description}
+                    </div>
+                    <div className="text-sm flex items-center gap-1">
+                      <strong>Time: </strong>
+                      <Clock size={14} className="inline text-gray-500" />
+                      <span>{formatEventTime(event.date)}</span>
+                    </div>
+                    <p><strong>Location: </strong> {event.location}</p>
+                  </div>
+                ))}
               </div>
+            )}
 
-{selectedDate && getEventsForDate(selectedDate).length > 0 && (
-  <div className="mb-4 space-y-2">
-    <h4 className="font-medium">Existing Events:</h4>
-    {getEventsForDate(selectedDate).map(event => (
-      <div key={event._id} className="p-3 border rounded-lg hover:bg-gray-50 group">
-        <div className="flex justify-between items-start">
-          <div className="font-semibold"><strong>Title:</strong>{event.title}</div>
-          {!userRole === 'admin' && (
-          <button
-            onClick={() => handleDeleteEvent(event._id)}
-            className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-            aria-label="Delete event"
-          >   
-            <Trash size={16} />
-          </button>
-          )}
+            <form onSubmit={handleAddEvent} className="mt-4 space-y-3">
+              <input
+                type="text"
+                placeholder="Event Title"
+                className="w-full p-2 border rounded"
+                value={newEvent.title}
+                onChange={(e) => setNewEvent({
+                  ...newEvent,
+                  title: e.target.value,
+                })}
+                required
+              />
+              <textarea
+                placeholder="Event Description"
+                className="w-full p-2 border rounded"
+                value={newEvent.description}
+                onChange={(e) => setNewEvent({
+                  ...newEvent,
+                  description: e.target.value,
+                })}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Event Location"
+                className="w-full p-2 border rounded"
+                value={newEvent.location}
+                onChange={(e) => setNewEvent({
+                  ...newEvent,
+                  location: e.target.value,
+                })}
+                required
+              />
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="date"
+                  className="w-full sm:flex-1 p-2 border rounded"
+                  value={newEvent.date}
+                  onChange={(e) => setNewEvent({
+                    ...newEvent,
+                    date: e.target.value
+                  })}
+                  required
+                />
+                <input
+                  type="time"
+                  className="w-full sm:flex-1 p-2 border rounded"
+                  value={newEvent.time}
+                  onChange={(e) => setNewEvent({
+                    ...newEvent,
+                    time: e.target.value
+                  })}
+                  required
+                />
+              </div>
+              <button 
+                type="submit" 
+                className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                Add Event
+              </button>
+            </form>
+          </div>
         </div>
-        <div className="text-sm"><strong>Description and Time:</strong>{event.description}</div>
-        <p><strong>Location:</strong> {event.location}</p>
-      </div>
-    ))}
-  </div>
-)}
-
-<form onSubmit={handleAddEvent} className="mt-4 space-y-3">
-  <input
-    type="text"
-    placeholder="Event Title"
-    className="w-full p-2 border rounded"
-    value={newEvent.title}
-    onChange={(e) => setNewEvent({
-      ...newEvent,
-      title: e.target.value,
-    })}
-    required
-  />
-  <textarea
-    placeholder="Description with Time"
-    className="w-full p-2 border rounded"
-    value={newEvent.description}
-    onChange={(e) => setNewEvent({
-      ...newEvent,
-      description: e.target.value,
-    })}
-    required
-  />
-  <input
-    type="text"
-    placeholder="Event Location"
-    className="w-full p-2 border rounded"
-    value={newEvent.location}
-    onChange={(e) => setNewEvent({
-      ...newEvent,
-      location: e.target.value,
-    })}
-    required
-  />
-  <div className="flex flex-col sm:flex-row gap-2">
-    <input
-      type="date"
-      className="w-full sm:flex-1 p-2 border rounded"
-      value={newEvent.date}
-      onChange={(e) => setNewEvent({
-        ...newEvent,
-        date: e.target.value
-      })}
-      required
-    />
-  </div>
-  <button 
-    type="submit" 
-    className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-  >
-    Add Event
-  </button>
-</form>
-
-</div>
-</div>
-)}
-</div>
-
-);
+      )}
+    </div>
+  );
 };
 
 export default EventCalendar;

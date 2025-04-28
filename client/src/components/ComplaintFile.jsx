@@ -9,7 +9,7 @@ const ComplaintFile = () => {
     description: "",
   });
 
-  // State for errors and success message
+ 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);

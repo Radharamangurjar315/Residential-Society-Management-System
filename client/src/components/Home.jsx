@@ -7,8 +7,8 @@ const HomePage = () => {
   useEffect(() => {
     const shouldRefresh = localStorage.getItem("refreshHomeOnce");
     if (shouldRefresh === "true") {
-      localStorage.setItem("refreshHomeOnce", "false"); // reset flag
-      window.location.reload(); // 👈 silent refresh (not full page nav)
+      localStorage.setItem("refreshHomeOnce", "false"); 
+      window.location.reload(); // 
     }
   }, []);
   
@@ -118,8 +118,11 @@ const HomePage = () => {
 
           {/* Call to action buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mb-12 w-full max-w-md mx-auto opacity-0 animate-fade-in-delay-4">
-            <button className="w-full py-3.5 px-6 rounded-full text-white font-medium bg-gradient-to-r from-indigo-500 to-indigo-600 hover:shadow-lg hover:from-indigo-600 hover:to-indigo-700 transform hover:-translate-y-0.5 transition duration-300 shadow-md shadow-indigo-500/30">
+            <button className="w-full py-3.5 px-6 rounded-full text-white font-medium bg-gradient-to-r from-indigo-500 to-indigo-600 hover:shadow-lg hover:from-indigo-600 hover:to-indigo-700 transform hover:-translate-y-0.5 transition duration-300 shadow-md shadow-indigo-500/30"
+              onClick={() => navigate("/explore")}
+            >
               Get Started
+            
             </button>
             <button 
               className="w-full py-3.5 px-6 rounded-full font-medium text-indigo-600 border-2 border-indigo-500 hover:bg-indigo-50 transform hover:-translate-y-0.5 transition duration-300"
@@ -143,8 +146,6 @@ const HomePage = () => {
                   <p className="text-gray-600 text-sm">Join us for the grand opening of our community garden this weekend!</p>
                 </div>
               </div>
-              
-              
               
               <div className="flex items-start gap-4 p-4 hover:bg-gray-50 rounded-lg transition duration-200">
                 <div className="text-xl text-indigo-500 mt-1">

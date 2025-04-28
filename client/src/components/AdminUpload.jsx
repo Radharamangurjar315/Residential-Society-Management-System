@@ -10,8 +10,6 @@ const AdminUpload = ({ societyId }) => {
   // Fetch token from localStorage when component mounts
   useEffect(() => {
     const userToken = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
-    const userRole = user.role;
     if (userToken) {
       setToken(userToken);
     } else {
@@ -30,7 +28,6 @@ const AdminUpload = ({ societyId }) => {
   };
 
   const handleUpload = async () => {
-    if(!userRole === "admin") return;
     if (!selectedFile) return alert("Please select a file");
     
     setIsUploading(true);
